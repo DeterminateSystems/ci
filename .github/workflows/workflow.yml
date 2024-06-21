@@ -75,8 +75,8 @@ jobs:
                else
                    .
                end
+               | select(. != null)
            )
-           | select(. != null)
            | "matrix=" + tostring
            ' >> "$GITHUB_OUTPUT"
 
