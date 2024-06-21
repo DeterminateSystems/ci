@@ -37,7 +37,9 @@ jobs:
       contents: "read"
 ```
 
-and you're done!
+and you're done, you'll get something like this:
+
+<img width="1140" alt="image" src="https://github.com/DeterminateSystems/ci/assets/76716/c2c6aa07-3fd3-4e66-9440-bef264b472da">
 
 ### Publishing to FlakeHub
 
