@@ -86,9 +86,9 @@ jobs:
         {
           "aarch64-darwin": "macos-latest-xlarge",
           "aarch64-linux": "UbuntuLatest32Cores128GArm",
-          "i686-linux": "UbuntuLatest32Cores128G"
+          "i686-linux": "UbuntuLatest32Cores128G",
           "x86_64-darwin": "macos-latest-xlarge",
-          "x86_64-linux": "UbuntuLatest32Cores128G",
+          "x86_64-linux": "UbuntuLatest32Cores128G"
         }
 ```
 
