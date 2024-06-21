@@ -54,10 +54,9 @@ jobs:
       - name: Inventory the flake for targeted systems
         id: inventory
         env:
-          RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
+          FLAKE_ITER_RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
         run: |
-          nix run "https://flakehub.com/flake/DeterminateSystems/flake-iter/*" -- systems \
-            --runner-map '${{ env.RUNNER_MAP }}'
+          nix run "https://flakehub.com/flake/DeterminateSystems/flake-iter/*" -- systems
   build:
     runs-on: ${{ matrix.systems.runs-on }}
     needs: inventory
