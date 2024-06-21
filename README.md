@@ -60,6 +60,7 @@ jobs:
 
 #### Custom Runner Types
 
+The default runner map uses `ubuntu-latest` for x86 Linux, and `macos-latest` for macOS.
 Take advantage of [larger GitHub runners][runners] by providing a custom runner map:
 
 ```yaml
