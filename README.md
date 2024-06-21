@@ -129,7 +129,7 @@ jobs:
 
 ## Notes
 
-Use of this workflow uses a collection of GitHub Action by Determinate Systems, which are covered by the Determinate Systems [privacy policy][privacy policy] and terms of service[tos].
+Use of this workflow uses a collection of GitHub Action by Determinate Systems, which are covered by the Determinate Systems [privacy policy][privacy policy] and [terms of service][tos].
 
 [flake-schemas]: https://determinate.systems/posts/flake-schemas/
 [magic-nix-cache]: https://github.com/determinateSystems/magic-nix-cache-action
