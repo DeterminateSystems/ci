@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      matrix: ${{ steps.inventory.outputs.matrix }}
+      systems: ${{ steps.inventory.outputs.systems }}
 
     permissions:
       id-token: "write"
@@ -56,36 +56,14 @@ jobs:
         env:
           RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
         run: |
-          nix eval --json \
-               --override-input flake '.' \
-               --no-write-lock-file 'https://flakehub.com/f/DeterminateSystems/inspect/*#contents.excludingOutputPaths' \
-           | nix run nixpkgs#jq -- --raw-output --argjson map "$RUNNER_MAP" '
-           [(
-           .
-           | recurse
-           | select (type == "object" and has("forSystems") and (.forSystems | type == "array"))
-           | .forSystems[]
-           )]
-           | sort
-           | unique
-           | map(
-               { "nix-system": ., "runs-on": $map[.]}
-               | if ."runs-on" == null then
-                   ("No GitHub Actions Runner system known for the Nix system `" + ."nix-system" + "`.\n") | debug | null
-               else
-                   .
-               end
-               | select(. != null)
-           )
-           | "matrix=" + tostring
-           ' >> "$GITHUB_OUTPUT"
-
+          nix run "https://flakehub.com/flake/DeterminateSystems/flake-iter/*" -- systems \
+            --runner-map '${{ env.RUNNER_MAP }}'
   build:
     runs-on: ${{ matrix.systems.runs-on }}
     needs: inventory
     strategy:
       matrix:
-        systems: ${{ fromJSON(needs.inventory.outputs.matrix) }}
+        systems: ${{ fromJSON(needs.inventory.outputs.systems) }}
 
     permissions:
       id-token: "write"
