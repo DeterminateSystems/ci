@@ -7,6 +7,11 @@ The one-stop shop for effortless Nix CI in GitHub Actions.
 - Discovers and builds your entire flake using [Flake Schemas][flake-schemas].
 - Easily opt-in to publishing to [FlakeHub][flakehub].
 
+**Status:** The Determinate CI workflow is an experiment.
+It may change significantly without warning.
+Please feel free to try it out, report bugs, and [let us know how it goes in our Discord][discord]!
+Stabilization to follow.
+
 ## Usage
 
 Create a workflow in your project at `.github/workflows/ci.yml`, and copy in this text:
@@ -109,7 +114,14 @@ jobs:
       visibility: public
 ```
 
+## Notes
+
+Use of this workflow uses a collection of GitHub Action by Determinate Systems, which are covered by the Determinate Systems [privacy policy][privacy policy] and terms of service[tos].
+
 [flake-schemas]: https://determinate.systems/posts/flake-schemas/
 [magic-nix-cache]: https://github.com/determinateSystems/magic-nix-cache-action
 [flakehub]: https://flakehub.com/
 [runners]: https://docs.github.com/en/actions/using-github-hosted-runners/about-larger-runners
+[discord]: https://determinate.systems/discord
+[privacy policy]: https://determinate.systems/policies/privacy/
+[tos]: https://determinate.systems/policies/terms-of-service/
