@@ -39,7 +39,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: Determinatesystems/flake-checker-action@main
+      # disabled pending strategy discussion on exposing tunables
+      # - uses: Determinatesystems/flake-checker-action@main
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           flakehub: true
