@@ -71,7 +71,7 @@ jobs:
            | map(
                { "nix-system": ., "runs-on": $map[.]}
                | if ."runs-on" == null then
-                   ("No GitHub Actions Runner system known for the Nix system `" + ."nix-system" + ."`.\n") | debug | null
+                   ("No GitHub Actions Runner system known for the Nix system `" + ."nix-system" + "`.\n") | debug | null
                else
                    .
                end
