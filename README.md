@@ -18,6 +18,7 @@ Create a workflow in your project at `.github/workflows/ci.yml`, and copy in thi
 
 ```yaml
 on:
+  pull_request:
   workflow_dispatch:
   push:
     branches:
@@ -48,6 +49,7 @@ Specify the flake's visibility:
 
 ```yaml
 on:
+  pull_request:
   workflow_dispatch:
   push:
     branches:
