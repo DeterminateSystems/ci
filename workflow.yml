@@ -1,0 +1,134 @@
+on:
+  workflow_call:
+    inputs:
+      flake-owner:
+        required: false
+        default:
+        type: string
+      flake-name:
+        required: false
+        default: ${{ github.event.repository.name }}
+        type: string
+      visibility:
+        required: false
+        type: string
+      default-branch:
+        required: false
+        default: main
+        type: string
+      enable-ssh-agent:
+        required: false
+        default: false
+        type: boolean
+      runner-map:
+        required: false
+        type: string
+        default: |
+          {
+            "aarch64-darwin": "macos-latest",
+            "x86_64-darwin": "macos-latest",
+            "x86_64-linux": "ubuntu-latest",
+            "i686-linux": "ubuntu-latest"
+          }
+    secrets:
+      ssh-private-key:
+        required: false
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+
+    outputs:
+      matrix: ${{ steps.inventory.outputs.matrix }}
+
+    permissions:
+      id-token: "write"
+      contents: "read"
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Determinatesystems/flake-checker-action@main
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          flakehub: true
+      - name: Inventory the flake for targeted systems
+        id: inventory
+        env:
+          RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
+        run: |
+          nix eval --json \
+               --override-input flake '.' \
+               --no-write-lock-file 'https://flakehub.com/f/DeterminateSystems/inspect/*#contents.excludingOutputPaths' \
+           | nix run nixpkgs#jq -- --raw-output --argjson map "$RUNNER_MAP" '
+           [(
+           .
+           | recurse
+           | select (type == "object" and has("forSystems") and (.forSystems | type == "array"))
+           | .forSystems[]
+           )]
+           | sort
+           | unique
+           | map(
+               { "nix-system": ., "runs-on": $map[.]}
+               | if ."runs-on" == null then
+                   ("No GitHub Actions Runner system known for the Nix system `" + ."nix-system" + ."`.\n") | debug | null
+               else
+                   .
+               end
+           )
+           | select(. != null)
+           | "matrix=" + tostring
+           ' >> "$GITHUB_OUTPUT"
+
+  build:
+    runs-on: ${{ matrix.systems.runs-on }}
+    needs: inventory
+    strategy:
+      matrix:
+        systems: ${{ fromJSON(needs.inventory.outputs.matrix) }}
+
+    permissions:
+      id-token: "write"
+      contents: "read"
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          flakehub: true
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          flakehub-flake-name: ${{ github.repository_owner }}/${{ inputs.flake-name }}
+      - uses: webfactory/ssh-agent@v0.9.0
+        if: ${{ inputs.enable-ssh-agent }}
+        with:
+          ssh-private-key: ${{ secrets.ssh-private-key }}
+      - name: Build for ${{ matrix.systems.nix-system }}
+        run: nix run 'https://flakehub.com/f/DeterminateSystems/flake-iter/*' -- --verbose
+
+  success:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      id-token: "write"
+      contents: "read"
+
+    steps:
+      - run: true
+      - uses: actions/checkout@main
+        if: ${{ !github.repository.fork && inputs.flake-owner != '' && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
+      - uses: DeterminateSystems/nix-installer-action@main
+        if: ${{ !github.repository.fork && inputs.flake-owner != '' && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
+        with:
+          flakehub: true
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+        if: ${{ !github.repository.fork && inputs.flake-owner != '' && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
+        with:
+          flakehub-flake-name: ${{ github.repository_owner }}/${{ inputs.flake-name }}
+      - uses: "DeterminateSystems/flakehub-push@main"
+        if: ${{ !github.repository.fork && inputs.flake-owner != '' && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
+        with:
+          name: ${{ inputs.flake-owner }}/${{ inputs.flake-name }}
+          rolling: ${{ github.ref == format('refs/heads/{0}', inputs.default-branch) }}
+          visibility: ${{ inputs.visibility }}
+          include-output-paths: true
