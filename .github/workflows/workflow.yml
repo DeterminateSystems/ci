@@ -51,6 +51,9 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           flakehub: true
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          flakehub-flake-name: ${{ github.repository_owner }}/${{ inputs.flake-name }}
       - name: Inventory the flake for targeted systems
         id: inventory
         env:
