@@ -22,6 +22,10 @@ on:
             "x86_64-linux": "ubuntu-latest",
             "i686-linux": "ubuntu-latest"
           }
+      nixpkgs-keys:
+        required: false
+        default: nixpkgs
+        type: string
     secrets:
       ssh-private-key:
         required: false
@@ -40,6 +44,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: Determinatesystems/flake-checker-action@main
+        with:
+          nixpkgs-keys: ${{ inputs.nixpkgs-keys }}
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           flakehub: true
