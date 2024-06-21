@@ -72,7 +72,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - name: Build for ${{ matrix.systems.nix-system }}
-        run: nix run 'https://flakehub.com/f/DeterminateSystems/flake-iter/*' -- --verbose
+        run: nix run 'https://flakehub.com/f/DeterminateSystems/flake-iter/*' -- build --verbose
 
   success:
     runs-on: ubuntu-latest
