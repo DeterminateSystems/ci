@@ -45,6 +45,18 @@ Publish to FlakeHub on every push to the default branch, and every tag.
 Specify the flake owner, and visibility:
 
 ```yaml
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - "v?[0-9]+.[0-9]+.[0-9]+*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   DeterminateCI:
     uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
@@ -52,7 +64,7 @@ jobs:
       id-token: "write"
       contents: "read"
     with:
-      flake-owner: DeterminateSystems
+      flake-owner: TheFlakeHubOwner
       visibility: public
 ```
 
