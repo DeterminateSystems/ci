@@ -42,7 +42,7 @@ and you're done!
 ### Publishing to FlakeHub
 
 Publish to FlakeHub on every push to the default branch, and every tag.
-Specify the flake owner, and visibility:
+Specify the flake's visibility:
 
 ```yaml
 on:
@@ -64,7 +64,6 @@ jobs:
       id-token: "write"
       contents: "read"
     with:
-      flake-owner: TheFlakeHubOwner
       visibility: public
 ```
 
@@ -108,23 +107,6 @@ jobs:
       enable-ssh-agent: true
     secrets:
       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-```
-
-#### Publish with a Different Flake Name
-
-Publish to FlakeHub using a different flake name by specifying the flake owner, flake name, and visibility:
-
-```yaml
-jobs:
-  DeterminateCI:
-    uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
-    permissions:
-      id-token: "write"
-      contents: "read"
-    with:
-      flake-owner: DeterminateSystems
-      flake-name: my-flake
-      visibility: public
 ```
 
 ## Notes
