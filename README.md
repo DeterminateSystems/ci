@@ -3,7 +3,7 @@
 The one-stop shop for effortless Nix CI in GitHub Actions.
 
 - Automatically builds on all the architectures your flake supports.
-- Built-in, free caching using [Magic Nix Cache][magic-nix-cache] and FlakeHub Cache.
+- Built-in, free caching using [Magic Nix Cache][magic-nix-cache] and optionally [FlakeHub Cache][flakehub-cache].
 - Discovers and builds your entire flake using [Flake Schemas][flake-schemas].
 - Easily opt-in to publishing to [FlakeHub][flakehub].
 
@@ -125,3 +125,4 @@ Use of this workflow uses a collection of GitHub Action by Determinate Systems, 
 [discord]: https://determinate.systems/discord
 [privacy policy]: https://determinate.systems/policies/privacy/
 [tos]: https://determinate.systems/policies/terms-of-service/
+[flakehub-cache]: https://determinate.systems/posts/flakehub-cache-beta/
