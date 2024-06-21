@@ -51,7 +51,7 @@ jobs:
         run: |
           nix run "https://flakehub.com/f/DeterminateSystems/flake-iter/*" -- systems
   build:
-    runs-on: ${{ matrix.systems.runs-on }}
+    runs-on: ${{ matrix.systems.runner }}
     needs: inventory
     strategy:
       matrix:
