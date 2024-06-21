@@ -26,7 +26,7 @@ concurrency:
 
 jobs:
   DeterminateCI:
-    uses: DeterminateSystems/ci/workflow.yml@main
+    uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
     permissions:
       id-token: "write"
       contents: "read"
@@ -42,7 +42,7 @@ Specify the flake owner, and visibility:
 ```yaml
 jobs:
   DeterminateCI:
-    uses: DeterminateSystems/ci/workflow.yml@main
+    uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
     permissions:
       id-token: "write"
       contents: "read"
@@ -60,7 +60,7 @@ Take advantage of [larger GitHub runners][runners] by providing a custom runner 
 ```yaml
 jobs:
   DeterminateCI:
-    uses: DeterminateSystems/ci/workflow.yml@main
+    uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
     permissions:
       id-token: "write"
       contents: "read"
@@ -82,7 +82,7 @@ Configure an SSH agent with a secret private key for private repository support.
 ```yaml
 jobs:
   DeterminateCI:
-    uses: DeterminateSystems/ci/workflow.yml@main
+    uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
     permissions:
       id-token: "write"
       contents: "read"
@@ -99,7 +99,7 @@ Publish to FlakeHub using a different flake name by specifying the flake owner, 
 ```yaml
 jobs:
   DeterminateCI:
-    uses: DeterminateSystems/ci/workflow.yml@main
+    uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
     permissions:
       id-token: "write"
       contents: "read"

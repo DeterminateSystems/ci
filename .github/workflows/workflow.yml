@@ -14,7 +14,7 @@ on:
         type: string
       default-branch:
         required: false
-        default: main
+        default: ${{ github.event.repository.default_branch }}
         type: string
       enable-ssh-agent:
         required: false
