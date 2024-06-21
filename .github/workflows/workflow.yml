@@ -1,14 +1,6 @@
 on:
   workflow_call:
     inputs:
-      flake-owner:
-        required: false
-        default:
-        type: string
-      flake-name:
-        required: false
-        default: ${{ github.event.repository.name }}
-        type: string
       visibility:
         required: false
         type: string
@@ -52,8 +44,6 @@ jobs:
         with:
           flakehub: true
       - uses: DeterminateSystems/magic-nix-cache-action@main
-        with:
-          flakehub-flake-name: ${{ github.repository_owner }}/${{ inputs.flake-name }}
       - name: Inventory the flake for targeted systems
         id: inventory
         env:
@@ -77,8 +67,6 @@ jobs:
         with:
           flakehub: true
       - uses: DeterminateSystems/magic-nix-cache-action@main
-        with:
-          flakehub-flake-name: ${{ github.repository_owner }}/${{ inputs.flake-name }}
       - uses: webfactory/ssh-agent@v0.9.0
         if: ${{ inputs.enable-ssh-agent }}
         with:
@@ -96,19 +84,16 @@ jobs:
     steps:
       - run: true
       - uses: actions/checkout@main
-        if: ${{ !github.repository.fork && inputs.flake-owner != '' && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
+        if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
       - uses: DeterminateSystems/nix-installer-action@main
-        if: ${{ !github.repository.fork && inputs.flake-owner != '' && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
+        if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
         with:
           flakehub: true
       - uses: DeterminateSystems/magic-nix-cache-action@main
-        if: ${{ !github.repository.fork && inputs.flake-owner != '' && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
-        with:
-          flakehub-flake-name: ${{ github.repository_owner }}/${{ inputs.flake-name }}
+        if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
       - uses: "DeterminateSystems/flakehub-push@main"
-        if: ${{ !github.repository.fork && inputs.flake-owner != '' && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
+        if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
         with:
-          name: ${{ inputs.flake-owner }}/${{ inputs.flake-name }}
           rolling: ${{ github.ref == format('refs/heads/{0}', inputs.default-branch) }}
           visibility: ${{ inputs.visibility }}
           include-output-paths: true
