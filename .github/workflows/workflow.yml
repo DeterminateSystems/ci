@@ -87,8 +87,9 @@ jobs:
 
     steps:
       - run: "true"
-        if: ${{ success() }}
-      - run: "exit 1"
+      - run: |
+          echo "A dependent in the build matrix failed."
+          exit 1"
         if: |
           contains(needs.*.result, 'failure') ||
           contains(needs.*.result, 'cancelled')
