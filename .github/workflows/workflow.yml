@@ -54,7 +54,6 @@ jobs:
   build:
     runs-on: ${{ matrix.systems.runner }}
     needs: inventory
-    continue-on-error: false
     strategy:
       matrix:
         systems: ${{ fromJSON(needs.inventory.outputs.systems) }}
