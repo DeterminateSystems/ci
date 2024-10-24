@@ -12,6 +12,10 @@ on:
         required: false
         default: false
         type: boolean
+      directory:
+        required: false
+        default: "."
+        type: string
       runner-map:
         required: false
         type: string
@@ -48,6 +52,7 @@ jobs:
       - name: Inventory the flake for targeted systems
         id: inventory
         env:
+          FLAKE_ITER_DIRECTORY: ${{ inputs.directory }}
           FLAKE_ITER_RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
         run: |
           nix run "https://flakehub.com/f/DeterminateSystems/flake-iter/*" -- systems
@@ -74,6 +79,7 @@ jobs:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - name: Build for ${{ matrix.systems.nix-system }}
         env:
+          FLAKE_ITER_DIRECTORY: ${{ inputs.directory }}
           FLAKE_ITER_NIX_SYSTEM: ${{ matrix.systems.nix-system }}
         run: nix run 'https://flakehub.com/f/DeterminateSystems/flake-iter/*' -- --verbose build
 
