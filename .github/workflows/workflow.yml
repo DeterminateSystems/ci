@@ -113,3 +113,4 @@ jobs:
           rolling: ${{ github.ref == format('refs/heads/{0}', inputs.default-branch) }}
           visibility: ${{ inputs.visibility }}
           include-output-paths: true
+          directory: ${{ inputs.directory }}
