@@ -1,0 +1,29 @@
+on:
+  push:
+    branches: main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lints:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          determinate: true
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - run: nix run nixpkgs#action-validator -- -v ./.github/workflows/workflow.yml
+      - run: nix run nixpkgs#nodePackages.prettier -- --check .
+
+  DeterminateCI:
+    uses: ./.github/workflows/workflow.yml
+    permissions:
+      id-token: "write"
+      contents: "read"
+    with:
+      directory: ./tests/smoke
