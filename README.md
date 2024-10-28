@@ -117,8 +117,6 @@ jobs:
 
 ## Notes
 
-Contributors: please format all files with `nix run nixpkgs#nodePackages.prettier -- --write .` before committing.
-
 Use of this workflow uses a collection of GitHub Action by Determinate Systems, which are covered by the Determinate Systems [privacy policy][privacy policy] and [terms of service][tos].
 
 [flake-schemas]: https://determinate.systems/posts/flake-schemas/
