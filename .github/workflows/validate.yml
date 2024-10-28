@@ -21,7 +21,7 @@ jobs:
       - run: nix run nixpkgs#nodePackages.prettier -- --check .
 
   DeterminateCI:
-    uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
+    uses: ./.github/workflows/workflow.yml
     permissions:
       id-token: "write"
       contents: "read"
