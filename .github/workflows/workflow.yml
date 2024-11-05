@@ -4,6 +4,14 @@ on:
       visibility:
         required: false
         type: string
+      name:
+        type: string
+        description: The name of your published flake. In the format of OrgName/RepoName. OrgName must match your organization's GitHub root name or the publish will fail.
+        required: false
+      rolling-minor:
+        type: number
+        description: "Specify the SemVer minor version of your rolling releases. All releases will follow the versioning scheme '0.[rolling-minor].[commit count]+rev-[git sha]'"
+        required: false        
       default-branch:
         required: false
         default: ${{ github.event.repository.default_branch }}
@@ -114,6 +122,8 @@ jobs:
       - uses: "DeterminateSystems/flakehub-push@main"
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
         with:
+          name: ${{ inputs.name }}
+          rolling-minor: ${{ inputs.rolling-minor }}
           rolling: ${{ github.ref == format('refs/heads/{0}', inputs.default-branch) }}
           visibility: ${{ inputs.visibility }}
           include-output-paths: true
