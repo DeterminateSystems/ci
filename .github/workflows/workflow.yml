@@ -89,6 +89,7 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@main
         with:
           flakehub-flake-name: ${{ inputs.name }}
+          source-pr: 109
       - uses: webfactory/ssh-agent@v0.9.0
         if: ${{ inputs.enable-ssh-agent }}
         with:
