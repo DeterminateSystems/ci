@@ -85,7 +85,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
         with:
-          flakehub: true
+          determinate: false
       - uses: DeterminateSystems/magic-nix-cache-action@main
         with:
           flakehub-flake-name: ${{ inputs.name }}
