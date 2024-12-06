@@ -23,6 +23,7 @@ on:
   push:
     branches:
       - main
+      - master
     tags:
       - "v?[0-9]+.[0-9]+.[0-9]+*"
 
@@ -54,6 +55,7 @@ on:
   push:
     branches:
       - main
+      - master
     tags:
       - "v?[0-9]+.[0-9]+.[0-9]+*"
 
