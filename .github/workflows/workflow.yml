@@ -26,6 +26,34 @@ on:
             "x86_64-linux": "ubuntu-latest",
             "i686-linux": "ubuntu-latest"
           }
+    outputs:
+      flake_name:
+        value: ${{ jobs.success.outputs.flake_name }}
+        description: |
+          Name of the flake.
+
+          Example: DeterminateSystems/flakehub-push
+      flake_version:
+        value: ${{ jobs.success.outputs.flake_version }}
+        description: |
+          Version of the published flake.
+
+          Example: 0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c
+      flakeref_exact:
+        value: ${{ jobs.success.outputs.flakeref_exact }}
+        description: |
+          A precise reference that always resolves to this to this exact release.
+
+          Example: DeterminateSystems/flakehub-push/=0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c
+      flakeref_at_least:
+        value: ${{ jobs.success.outputs.flakeref_at_least }}
+        description: |
+          A loose reference to this release.
+          Depending on this reference will require at least this version, and will also resolve to newer releases.
+          This output is not sufficient for deployment pipelines, use flake_exact instead.
+
+          Example: DeterminateSystems/flakehub-push/0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c
+
     secrets:
       ssh-private-key:
         required: false
@@ -95,6 +123,11 @@ jobs:
       id-token: "write"
       contents: "read"
 
+    outputs:
+      flake_name: ${{ steps.publish.outputs.flake_name }}
+      flake_version: ${{ steps.publish.outputs.flake_version }}
+      flakeref_exact: ${{ steps.publish.outputs.flakeref_exact }}
+      flakeref_at_least: ${{ steps.publish.outputs.flakeref_at_least }}
     steps:
       - run: "true"
       - run: |
@@ -113,6 +146,7 @@ jobs:
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
       - uses: "DeterminateSystems/flakehub-push@main"
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
+        id: publish
         with:
           rolling: ${{ github.ref == format('refs/heads/{0}', inputs.default-branch) }}
           visibility: ${{ inputs.visibility }}
