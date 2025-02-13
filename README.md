@@ -73,6 +73,20 @@ jobs:
       visibility: public
 ```
 
+### Caching
+
+To speed up builds, the workflow uses [FlakeHub Cache](https://flakehub.com/cache) as a cache.
+
+> [!NOTE]
+> FlakeHub Cache only works if you're on a paid plan.
+
+If you're not signed up for FlakeHub, the workflow will still pass, but may be slower.
+In this case, your logs will include a warning like this:
+
+```
+ERROR magic_nix_cache: FlakeHub cache initialization failed: FlakeHub cache error: HTTP 401 Unauthorized: "User is not authorized for this resource."
+```
+
 ### Advanced Usage
 
 #### Custom Runner Types
