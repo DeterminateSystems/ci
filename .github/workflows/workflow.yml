@@ -16,6 +16,11 @@ on:
         required: false
         default: "."
         type: string
+      fail-fast:
+        required: false
+        default: true
+        type: boolean
+        description: "Whether to cancel all in-progress jobs if any matrix job fails"
       runner-map:
         required: false
         type: string
@@ -93,6 +98,7 @@ jobs:
     runs-on: ${{ matrix.systems.runner }}
     needs: inventory
     strategy:
+      fail-fast: ${{ inputs.fail-fast }}
       matrix:
         systems: ${{ fromJSON(needs.inventory.outputs.systems) }}
 
