@@ -106,11 +106,12 @@ By default, the CI maps the Nix systems to their equivalent GitHub-hosted runner
 |  | macOS (Apple Silicon) | ARM Linux | macOS (Intel) | x86 Linux |
 |---|---|---|---|---|
 | Flake `system:` (Nix build platform) | `aarch64-darwin` | `aarch64-linux` | `x86_64-darwin` | `x86_64-linux` |
-| [GitHub Actions Runner][runners] (workflow label) | `macos-latest` | For public repos, `ubuntu-24.04-arm`, otherwise `ubuntu-latest` (using x86) | `macos-latest` (same runner as macOS for Apple Silicon; not actually using Intel) | `ubuntu-latest` |
+| [GitHub Actions Runner][runners] (workflow label) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) |
 
 > [!INFO]
-> The standard ARM Linux runners are currently in public preview, and only supported on public repos.
-> To use ARM Linux runners on private repositories, you need a non-standard runners.
+> There is also a standard ARM Linux runner `ubuntu-24.04-arm`, currently in public preview and only supported on public repositories.
+> To use it, supply your own runner map as shown below.
+> To use ARM Linux runners on private repositories, you need a non-standard runners, as shown below.
 
 ##### Non-Standard runners
 
