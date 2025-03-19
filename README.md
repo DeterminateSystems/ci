@@ -103,9 +103,9 @@ ERROR magic_nix_cache: FlakeHub cache initialization failed: FlakeHub cache erro
 
 By default, the CI maps the Nix systems to their equivalent GitHub-hosted runners:
 
-|  | macOS (Apple Silicon) | ARM Linux | macOS (Intel) | x86 Linux |
-|---|---|---|---|---|
-| Flake `system:` (Nix build platform) | `aarch64-darwin` | `aarch64-linux` | `x86_64-darwin` | `x86_64-linux` |
+|                                                   | macOS (Apple Silicon)                | ARM Linux                   | macOS (Intel)                        | x86 Linux                   |
+| ------------------------------------------------- | ------------------------------------ | --------------------------- | ------------------------------------ | --------------------------- |
+| Flake `system:` (Nix build platform)              | `aarch64-darwin`                     | `aarch64-linux`             | `x86_64-darwin`                      | `x86_64-linux`              |
 | [GitHub Actions Runner][runners] (workflow label) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) |
 
 > [!INFO]
@@ -135,7 +135,7 @@ jobs:
 ```
 
 > [!TIP]
-> Using `macos-latest-large` is currently the only way to run *current* macOS on Intel architecture.
+> Using `macos-latest-large` is currently the only way to run _current_ macOS on Intel architecture.
 
 The other two types of runners are those provisioned on your own infrastructure, and [larger Ubuntu (not macOS) runners][runners-large] with bespoke specs (for example, 64 CPUs, 128GB RAM) hosted by GitHub.
 Confusingly, GitHub sometimes refers to both of these as "self-hosted" runners.
