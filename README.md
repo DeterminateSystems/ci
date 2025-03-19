@@ -109,7 +109,7 @@ By default, the CI maps the Nix systems to their equivalent GitHub-hosted runner
 | [GitHub Actions Runner][runners] (workflow label) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) |
 
 > [!INFO]
-> There is also a standard ARM Linux runner `ubuntu-24.04-arm`, currently in public preview and only supported on public repositories.
+> There is also a [standard ARM Linux runner][runners-linux-arm] `ubuntu-24.04-arm`, currently in public preview and only supported on public repositories.
 > To use it, supply your own runner map as shown below.
 > To use ARM Linux runners on private repositories, you need a non-standard runners, as shown below.
 
@@ -188,6 +188,7 @@ This workflow uses a collection of GitHub Actions by Determinate Systems, all of
 [runners]: https://docs.github.com/en/actions/using-github-hosted-runners
 [runners-large]: https://docs.github.com/en/actions/using-github-hosted-runners/using-larger-runners/about-larger-runners
 [runners-large-macos]: https://docs.github.com/en/actions/using-github-hosted-runners/using-larger-runners/about-larger-runners#about-macos-larger-runners
+[runners-linux-arm]: https://github.blog/changelog/2025-01-16-linux-arm64-hosted-runners-now-available-for-free-in-public-repositories-public-preview/
 [signup]: https://flakehub.com/signup
 [tos]: https://determinate.systems/policies/terms-of-service
 [visibility]: https://docs.determinate.systems/flakehub/concepts/visibility
