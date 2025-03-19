@@ -97,10 +97,26 @@ ERROR magic_nix_cache: FlakeHub cache initialization failed: FlakeHub cache erro
 
 ### Advanced usage
 
-#### Custom runner types
+#### GitHub Actions Runners
 
-The default runner map uses `ubuntu-latest` for x86 Linux and `macos-latest` for macOS.
-Take advantage of [larger GitHub runners][runners] by providing a custom runner map:
+##### Standard & larger runners
+
+By default, the CI maps the Nix systems to their equivalent GitHub-hosted runners:
+
+|  | macOS (Apple Silicon) | ARM Linux | macOS (Intel) | x86 Linux |
+|---|---|---|---|---|
+| Flake `system:` (Nix build platform) | `aarch64-darwin` | `aarch64-linux` | `x86_64-darwin` | `x86_64-linux` |
+| [GitHub Actions Runner][runners] (workflow label) | `macos-latest` | For public repos, `ubuntu-24.04-arm`, otherwise `ubuntu-latest` (using x86) | `macos-latest` (same runner as macOS for Apple Silicon; not actually using Intel) | `ubuntu-latest` |
+
+> [!INFO]
+> The standard ARM Linux runners are currently in public preview, and only supported on public repos.
+> To use ARM Linux runners on private repositories, you need a non-standard runners.
+
+##### Non-Standard runners
+
+You can also use several types of non-standard runners by providing a custom runner map.
+
+For example, this runner-map enables the [larger GitHub runners for macOS][runners-large-macos]:
 
 ```yaml
 jobs:
@@ -113,12 +129,30 @@ jobs:
       runner-map: |
         {
           "aarch64-darwin": "macos-latest-xlarge",
-          "aarch64-linux": "UbuntuLatest32Cores128GArm",
-          "i686-linux": "UbuntuLatest32Cores128G",
-          "x86_64-darwin": "macos-latest-xlarge",
-          "x86_64-linux": "UbuntuLatest32Cores128G"
+          "x86_64-darwin": "macos-latest-large"
         }
 ```
+
+> [!TIP]
+> Using `macos-latest-large` is currently the only way to run *current* macOS on Intel architecture.
+
+The other two types of runners are those provisioned on your own infrastructure, and [larger Ubuntu (not macOS) runners][runners-large] with bespoke specs (for example, 64 CPUs, 128GB RAM) hosted by GitHub.
+Confusingly, GitHub sometimes refers to both of these as "self-hosted" runners.
+
+> [!IMPORTANT]
+> Shared workflows such as the one used in this repo [can only access][workflow-access] non-standard runners if the workflow repo (this one) is owned by the same organisation (`DeterminateSystems`) or user.
+> To use this repo with non-standard runners if you are not `DeterminateSystems`, fork the repository and replace the upstream workflow with your fork.
+>
+> ```diff
+> jobs:
+>  DeterminateCI:
+> - uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
+> + uses: $YOURORG/ci/.github/workflows/workflow.yml@main
+> ```
+>
+> Replace `$YOURORG` with your own organisation or user.
+>
+> This limitation does not apply to larger macOS runners hosted by GitHub.
 
 #### Private SSH keys
 
@@ -150,7 +184,10 @@ This workflow uses a collection of GitHub Actions by Determinate Systems, all of
 [privacy]: https://determinate.systems/policies/privacy
 [private-flakes]: https://docs.determinate.systems/flakehub/private-flakes
 [publishing]: https://docs.determinate.systems/flakehub/publishing
-[runners]: https://docs.github.com/en/actions/using-github-hosted-runners/about-larger-runners
+[runners]: https://docs.github.com/en/actions/using-github-hosted-runners
+[runners-large]: https://docs.github.com/en/actions/using-github-hosted-runners/using-larger-runners/about-larger-runners
+[runners-large-macos]: https://docs.github.com/en/actions/using-github-hosted-runners/using-larger-runners/about-larger-runners#about-macos-larger-runners
 [signup]: https://flakehub.com/signup
 [tos]: https://determinate.systems/policies/terms-of-service
 [visibility]: https://docs.determinate.systems/flakehub/concepts/visibility
+[workflow-access]: https://docs.github.com/en/actions/sharing-automations/reusing-workflows#using-self-hosted-runners
