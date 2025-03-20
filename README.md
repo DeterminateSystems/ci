@@ -146,9 +146,9 @@ Confusingly, GitHub sometimes refers to both of these as "self-hosted" runners.
 >
 > ```diff
 > jobs:
->  DeterminateCI:
-> - uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
-> + uses: $YOURORG/ci/.github/workflows/workflow.yml@main
+>   DeterminateCI:
+> -    uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
+> +    uses: $YOURORG/ci/.github/workflows/workflow.yml@main
 > ```
 >
 > Replace `$YOURORG` with your own organisation or user.
