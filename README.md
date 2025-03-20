@@ -116,7 +116,6 @@ By default, the CI maps the Nix systems to their equivalent GitHub-hosted runner
 ##### Non-standard runners
 
 You can also use several types of non-standard runners by providing a custom runner map.
-
 For example, this runner map enables the [larger GitHub runners for macOS][runners-large-macos]:
 
 ```yaml
