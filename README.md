@@ -105,7 +105,7 @@ By default, the CI maps the Nix systems to their equivalent GitHub-hosted runner
 
 |                                                   | macOS (Apple Silicon)                | ARM Linux                   | macOS (Intel)                        | x86 Linux                   |
 | ------------------------------------------------- | ------------------------------------ | --------------------------- | ------------------------------------ | --------------------------- |
-| Flake `system:` (Nix build platform)              | `aarch64-darwin`                     | `aarch64-linux`             | `x86_64-darwin`                      | `x86_64-linux`              |
+| Flake `system` (Nix build platform)              | `aarch64-darwin`                     | `aarch64-linux`             | `x86_64-darwin`                      | `x86_64-linux`              |
 | [GitHub Actions Runner][runners] (workflow label) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) |
 
 > [!NOTE]
