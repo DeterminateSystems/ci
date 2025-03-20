@@ -171,6 +171,22 @@ jobs:
       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
 
+#### Continue on failure
+
+By default, if any build in the matrix fails, the workflow will cancel all remaining in-progress jobs.
+You can change this behavior by setting `fail-fast` to `false`:
+
+```yaml
+jobs:
+  DeterminateCI:
+    uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
+    permissions:
+      id-token: write
+      contents: read
+    with:
+      fail-fast: false
+```
+
 ## Notes
 
 This workflow uses a collection of GitHub Actions by Determinate Systems, all of which are covered by the Determinate Systems [privacy policy][privacy] and [terms of service][tos].
