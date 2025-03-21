@@ -111,6 +111,8 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
         with:
           determinate: true
+          extra-conf: |
+            sandbox = false
       - uses: DeterminateSystems/flakehub-cache-action@main
       - uses: webfactory/ssh-agent@v0.9.0
         if: ${{ inputs.enable-ssh-agent }}
