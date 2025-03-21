@@ -99,25 +99,24 @@ ERROR magic_nix_cache: FlakeHub cache initialization failed: FlakeHub cache erro
 
 #### GitHub Actions Runners
 
-##### Standard & larger runners
+##### Standard and larger runners
 
 By default, the CI maps the Nix systems to their equivalent GitHub-hosted runners:
 
-|  | macOS (Apple Silicon) | ARM Linux | macOS (Intel) | x86 Linux |
-|---|---|---|---|---|
-| Flake `system:` (Nix build platform) | `aarch64-darwin` | `aarch64-linux` | `x86_64-darwin` | `x86_64-linux` |
+|                                                   | macOS (Apple Silicon)                | ARM Linux                   | macOS (Intel)                        | x86 Linux                   |
+| ------------------------------------------------- | ------------------------------------ | --------------------------- | ------------------------------------ | --------------------------- |
+| Flake `system` (Nix build platform)               | `aarch64-darwin`                     | `aarch64-linux`             | `x86_64-darwin`                      | `x86_64-linux`              |
 | [GitHub Actions Runner][runners] (workflow label) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) |
 
-> [!INFO]
+> [!NOTE]
 > There is also a [standard ARM Linux runner][runners-linux-arm] `ubuntu-24.04-arm`, currently in public preview and only supported on public repositories.
 > To use it, supply your own runner map as shown below.
-> To use ARM Linux runners on private repositories, you need a non-standard runners, as shown below.
+> To use ARM Linux runners on private repositories, you need non-standard runners, as shown below.
 
-##### Non-Standard runners
+##### Non-standard runners
 
 You can also use several types of non-standard runners by providing a custom runner map.
-
-For example, this runner-map enables the [larger GitHub runners for macOS][runners-large-macos]:
+For example, this runner map enables the [larger GitHub runners for macOS][runners-large-macos]:
 
 ```yaml
 jobs:
@@ -135,7 +134,7 @@ jobs:
 ```
 
 > [!TIP]
-> Using `macos-latest-large` is currently the only way to run *current* macOS on Intel architecture.
+> Using `macos-latest-large` is currently the only way to run _current_ macOS on Intel architecture.
 
 The other two types of runners are those provisioned on your own infrastructure, and [larger Ubuntu (not macOS) runners][runners-large] with bespoke specs (for example, 64 CPUs, 128GB RAM) hosted by GitHub.
 Confusingly, GitHub sometimes refers to both of these as "self-hosted" runners.
@@ -146,9 +145,9 @@ Confusingly, GitHub sometimes refers to both of these as "self-hosted" runners.
 >
 > ```diff
 > jobs:
->  DeterminateCI:
-> - uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
-> + uses: $YOURORG/ci/.github/workflows/workflow.yml@main
+>   DeterminateCI:
+> -    uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
+> +    uses: $YOURORG/ci/.github/workflows/workflow.yml@main
 > ```
 >
 > Replace `$YOURORG` with your own organisation or user.
@@ -170,6 +169,22 @@ jobs:
       enable-ssh-agent: true
     secrets:
       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+```
+
+#### Continue on failure
+
+By default, if any build in the matrix fails, the workflow will cancel all remaining in-progress jobs.
+You can change this behavior by setting `fail-fast` to `false`:
+
+```yaml
+jobs:
+  DeterminateCI:
+    uses: DeterminateSystems/ci/.github/workflows/workflow.yml@main
+    permissions:
+      id-token: write
+      contents: read
+    with:
+      fail-fast: false
 ```
 
 ## Notes
