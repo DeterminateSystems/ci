@@ -49,6 +49,21 @@ You'll see something like this when your workflow has run successfully:
 
 ![Screenshot of successful build](https://github.com/DeterminateSystems/ci/assets/76716/c2c6aa07-3fd3-4e66-9440-bef264b472da)
 
+## Configuration options
+
+| Parameter          | Description                                                                                                                                           | Default                                                                                                                                                                   |
+| :----------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `visibility`       | `public`, `unlisted`, or `private` ([private flakes][private-flakes] are available only on a [FlakeHub paid plan][signup])                            |                                                                                                                                                                           |
+| `default-branch`   | The [default Git branch][default-branch] for the repository                                                                                           | `${{ github.event.repository.default_branch }}`                                                                                                                           |
+| `enable-ssh-agent` | Whether to enable [`webfactory/ssh-agent`][ssh-agent] in the workflow. If you set this to `true` you need to supply a secret named `ssh-private-key`. | `false`                                                                                                                                                                   |
+| `directory`        | The root directory of your flake.                                                                                                                     | `.`                                                                                                                                                                       |
+| `fail-fast`        | Whether to cancel all in-progress jobs if any matrix job fails                                                                                        | `true`                                                                                                                                                                    |
+| `runner-map`       | A custom mapping of [Nix system types][nix-system] to desired Actions runners                                                                         | `{ "aarch64-darwin": "macos-latest", "x86_64-darwin": "macos-latest", "x86_64-linux": "ubuntu-latest", "i686-linux": "ubuntu-latest", "aarch64-linux": "ubuntu-latest" }` |
+
+## Example configurations
+
+The sections below show configurations for some common use cases.
+
 ### Publishing to FlakeHub
 
 Publish to FlakeHub on every push to the default branch and on every tag.
@@ -187,16 +202,29 @@ jobs:
       fail-fast: false
 ```
 
+## Workflow outputs
+
+The `DeterminateSystems/ci` workflow provides a number of outputs that you can use in dependent workflows.
+
+| Output              | Description                                                                                                                                                                                                                  | Example                                                                                 |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `flake_name`        | The name of the flake                                                                                                                                                                                                        | `DeterminateSystems/flakehub-push`                                                      |
+| `flake_version`     | The version of the published flake                                                                                                                                                                                           | `0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c`                                   |
+| `flakeref_exact`    | A precise flake reference that always resolves to this to this exact release.                                                                                                                                                | `DeterminateSystems/flakehub-push/=0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c` |
+| `flakeref_at_least` | A loose reference to this release. Depending on this reference will require at least this version, and will also resolve to newer releases. This output is not sufficient for deployment pipelines, use flake_exact instead. | ``DeterminateSystems/flakehub-push/0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c` |
+
 ## Notes
 
 This workflow uses a collection of GitHub Actions by Determinate Systems, all of which are covered by the Determinate Systems [privacy policy][privacy] and [terms of service][tos].
 
 [binary-cache]: https://zero-to-nix.com/concepts/caching
 [cache]: https://flakehub.com/cache
+[default-branch]: https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-branches-in-your-repository/changing-the-default-branch
 [flake-schemas]: https://github.com/DeterminateSystems/flake-schemas
 [flakehub]: https://flakehub.com/
 [discord]: https://determinate.systems/discord
 [nix]: https://zero-to-nix.com
+[nix-system]: https://zero-to-nix.com/concepts/system-specificity
 [privacy]: https://determinate.systems/policies/privacy
 [private-flakes]: https://docs.determinate.systems/flakehub/private-flakes
 [publishing]: https://docs.determinate.systems/flakehub/publishing
@@ -205,6 +233,7 @@ This workflow uses a collection of GitHub Actions by Determinate Systems, all of
 [runners-large-macos]: https://docs.github.com/en/actions/using-github-hosted-runners/using-larger-runners/about-larger-runners#about-macos-larger-runners
 [runners-linux-arm]: https://github.blog/changelog/2025-01-16-linux-arm64-hosted-runners-now-available-for-free-in-public-repositories-public-preview/
 [signup]: https://flakehub.com/signup
+[ssh-agent]: https://github.com/webfactory/ssh-agent
 [tos]: https://determinate.systems/policies/terms-of-service
 [visibility]: https://docs.determinate.systems/flakehub/concepts/visibility
 [workflow-access]: https://docs.github.com/en/actions/sharing-automations/reusing-workflows#using-self-hosted-runners
