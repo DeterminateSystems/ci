@@ -2,26 +2,37 @@ on:
   workflow_call:
     inputs:
       visibility:
+        description: |
+          `public`, `unlisted`, or `private` ([private flakes](https://docs.determinate.systems/flakehub/private-flakes) are available only on a [FlakeHub paid plan](https://flakehub.com/signup)).
         required: false
         type: string
       default-branch:
+        description: |
+          The [default Git branch](https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-branches-in-your-repository/changing-the-default-branch) for the repository.
         required: false
         default: ${{ github.event.repository.default_branch }}
         type: string
       enable-ssh-agent:
+        description: |
+          Whether to enable [`webfactory/ssh-agent`](https://github.com/webfactory/ssh-agent) in the workflow. If you set this to `true` you need to supply a secret named `ssh-private-key`.
         required: false
         default: false
         type: boolean
       directory:
+        description: |
+          The root directory of your flake.
         required: false
         default: "."
         type: string
       fail-fast:
+        description: |
+          Whether to cancel all in-progress jobs if any matrix job fails
         required: false
         default: true
         type: boolean
-        description: "Whether to cancel all in-progress jobs if any matrix job fails"
       runner-map:
+        description: |
+          A custom mapping of [Nix system types](https://zero-to-nix.com/concepts/system-specificity) to desired Actions runners
         required: false
         type: string
         default: |
@@ -36,21 +47,21 @@ on:
       flake_name:
         value: ${{ jobs.success.outputs.flake_name }}
         description: |
-          Name of the flake.
+          The name of the flake.
 
-          Example: DeterminateSystems/flakehub-push
+          Example: `DeterminateSystems/flakehub-push`
       flake_version:
         value: ${{ jobs.success.outputs.flake_version }}
         description: |
           Version of the published flake.
 
-          Example: 0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c
+          Example: `0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c`
       flakeref_exact:
         value: ${{ jobs.success.outputs.flakeref_exact }}
         description: |
           A precise reference that always resolves to this to this exact release.
 
-          Example: DeterminateSystems/flakehub-push/=0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c
+          Example: `DeterminateSystems/flakehub-push/=0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c`
       flakeref_at_least:
         value: ${{ jobs.success.outputs.flakeref_at_least }}
         description: |
@@ -58,7 +69,7 @@ on:
           Depending on this reference will require at least this version, and will also resolve to newer releases.
           This output is not sufficient for deployment pipelines, use flake_exact instead.
 
-          Example: DeterminateSystems/flakehub-push/0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c
+          Example: `DeterminateSystems/flakehub-push/0.1.99+rev-2075013a3f3544d45a96f4b35df4ed03cd53779c`
 
     secrets:
       ssh-private-key:
