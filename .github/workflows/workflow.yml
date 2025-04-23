@@ -108,9 +108,10 @@ jobs:
         id: inventory
         env:
           FLAKE_ITER_RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
+          FLAKE_ITER_FLAKEREF: ${{ inputs.flake-iter-flakeref }}
         working-directory: ${{ inputs.directory }}
         run: |
-          nix run "https://flakehub.com/f/DeterminateSystems/flake-iter/*" -- systems
+          nix run "$FLAKE_ITER_FLAKEREF" -- systems
   build:
     runs-on: ${{ matrix.systems.runner }}
     needs: inventory
