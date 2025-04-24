@@ -46,7 +46,7 @@ on:
             "aarch64-darwin": "macos-latest",
             "x86_64-darwin": "macos-latest",
             "x86_64-linux": "ubuntu-latest",
-            "i686-linux": "ubuntu-latest",
+            "i686-linux": "ubuntu-latest"
           }
     outputs:
       flake_name:
