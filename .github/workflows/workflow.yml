@@ -45,7 +45,7 @@ on:
           {
             "aarch64-darwin": "macos-latest",
             "x86_64-darwin": "macos-latest",
-            "x86_64-linux": "ubuntu-latest",
+            "x86_64-linux": "ubuntu-20.04-4core",
             "i686-linux": "ubuntu-latest"
           }
     outputs:
