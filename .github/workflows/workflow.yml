@@ -152,63 +152,65 @@ jobs:
       # - run: sudo du /
       #   if: runner.os == 'Linux'
       - name: "node-cleanup"
+        if: runner.os == 'Linux'
         run: |
           sudo docker image prune --all --force
           sudo docker builder prune -a
           sudo apt-get clean
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          sudo rm -rf /usr/local/share/boost
-          sudo rm -rf /opt/microsoft
-          sudo rm -rf /usr/local/aws-cli/
-          sudo rm -rf /usr/local/n/versions/
-          sudo rm -rf /usr/local/aws-sam-cli/
-          sudo rm -rf /usr/local/share/powershell/
-          sudo rm -rf /usr/local/lib/node_modules/
-          sudo rm -rf /usr/local/julia*
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /usr/local/.ghcup/
-          sudo rm -rf /opt/hostedtoolcache/node/18.20.8
-          sudo rm -rf /usr/share/swift/
-          sudo rm -rf /usr/share/miniconda/
-          sudo rm -rf /usr/share/icons/
-          sudo rm -rf /usr/share/perl*
-          sudo rm -rf /usr/share/maven-repo/
-          sudo rm -rf /usr/share/vim/
-          sudo rm -rf /usr/lib/ruby/
-          sudo rm -rf /usr/lib/rpm/
-          sudo rm -rf /usr/lib/python3/
-          sudo rm -rf /usr/lib/jvm/
-          # sudo rm -rf /usr/lib/llvm-18
-          sudo rm -rf /usr/lib/llvm-17
-          sudo rm -rf /usr/lib/llvm-16
-          sudo rm -rf /usr/lib/google-cloud-sdk/
-          sudo rm -rf /usr/lib/dotnet
-          sudo rm -rf /usr/lib/python3
-          sudo rm -rf /var/lib/mecab
-          sudo rm -rf /var/log/
-          sudo rm -rf /usr/share/kotlinc/lib
-          sudo rm -rf /opt/az/
-          sudo rm -rf /opt/pipx/
-          sudo rm -rf /home/linuxbrew/
-          sudo rm -rf /var/lib/gems/
-          sudo rm -rf /var/lib/postgresql/
-          sudo rm -rf /var/lib/mysql/
-          sudo rm -rf /var/lib/snapd/
-          sudo rm -rf /var/cache/man/
-          sudo rm -rf /home/runner/.nvm/
-          sudo rm -rf /home/runner/.dotnet/
-          sudo rm -rf /home/runneradmin/.rustup/
-          sudo rm -rf /home/runneradmin/.cargo/
-          sudo rm -rf /etc/php/
-          sudo rm -rf /etc/.java
-          sudo rm -rf /etc/vim
-          sudo rm -rf /etc/skel/
-          sudo rm -rf /usr/include/
-
-        if: runner.os == 'Linux'
+          
+          # Create a list of directories to remove and remove them all at once
+          sudo find \
+            /usr/share/dotnet \
+            /usr/local/lib/android \
+            /opt/ghc \
+            /opt/hostedtoolcache/CodeQL \
+            /usr/local/share/boost \
+            /opt/microsoft \
+            /usr/local/aws-cli/ \
+            /usr/local/n/versions/ \
+            /usr/local/aws-sam-cli/ \
+            /usr/local/share/powershell/ \
+            /usr/local/lib/node_modules/ \
+            /usr/local/julia* \
+            /usr/local/lib/android \
+            /usr/local/.ghcup/ \
+            /opt/hostedtoolcache/node/18.20.8 \
+            /usr/share/swift/ \
+            /usr/share/miniconda/ \
+            /usr/share/icons/ \
+            /usr/share/perl* \
+            /usr/share/maven-repo/ \
+            /usr/share/vim/ \
+            /usr/lib/ruby/ \
+            /usr/lib/rpm/ \
+            /usr/lib/python3/ \
+            /usr/lib/jvm/ \
+            /usr/lib/llvm-17 \
+            /usr/lib/llvm-16 \
+            /usr/lib/google-cloud-sdk/ \
+            /usr/lib/dotnet \
+            /usr/lib/python3 \
+            /var/lib/mecab \
+            /var/log/ \
+            /usr/share/kotlinc/lib \
+            /opt/az/ \
+            /opt/pipx/ \
+            /home/linuxbrew/ \
+            /var/lib/gems/ \
+            /var/lib/postgresql/ \
+            /var/lib/mysql/ \
+            /var/lib/snapd/ \
+            /var/cache/man/ \
+            /home/runner/.nvm/ \
+            /home/runner/.dotnet/ \
+            /home/runneradmin/.rustup/ \
+            /home/runneradmin/.cargo/ \
+            /etc/php/ \
+            /etc/.java \
+            /etc/vim \
+            /etc/skel/ \
+            /usr/include/ \
+            -mindepth 0 -maxdepth 0 2>/dev/null | xargs -r sudo rm -rf
       - run: df -h
         if: runner.os == 'Linux'
       - uses: actions/checkout@v4
