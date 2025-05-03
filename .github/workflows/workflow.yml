@@ -18,6 +18,12 @@ on:
         required: false
         default: false
         type: boolean
+      enable-checks:
+        description: |
+          Whether to enable GitHub Checks API integration in the workflow.
+        required: false
+        default: false
+        type: boolean
       directory:
         description: |
           The root directory of your flake.
@@ -90,6 +96,8 @@ jobs:
     permissions:
       id-token: "write"
       contents: "read"
+      checks: ${{ inputs.enable-checks && 'write' || 'none' }}
+      checks: ${{ inputs.enable-checks && 'write' || 'none' }}
       checks: "write"
 
     steps:
@@ -105,6 +113,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - name: Create Check Run
+        if: ${{ inputs.enable-checks }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -220,6 +229,7 @@ jobs:
         run: nix run "$FLAKE_ITER_FLAKEREF" -- --verbose build
       
       - name: Create Build Check Run
+        if: ${{ inputs.enable-checks }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
