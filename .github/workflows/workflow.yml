@@ -90,6 +90,7 @@ jobs:
     permissions:
       id-token: "write"
       contents: "read"
+      checks: "write"
 
     steps:
       - uses: actions/checkout@v4
@@ -103,6 +104,19 @@ jobs:
         if: ${{ inputs.enable-ssh-agent }}
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
+      - name: Create Check Run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X POST -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -f 'name=Flake Inventory Check' \
+            -f 'head_sha=${{ github.event.pull_request.head.sha || github.sha }}' \
+            -f 'status=in_progress' \
+            -f 'output[title]=Checking Flake Systems' \
+            -f 'output[summary]=Analyzing flake and determining target systems for build matrix' \
+            -f 'output[text]=This check verifies that the flake is properly structured and inventories all systems that need to be built.' \
+            /repos/${{ github.repository }}/check-runs
       - name: Inventory the flake for targeted systems
         id: inventory
         env:
@@ -126,11 +140,65 @@ jobs:
     steps:
       - run: df -h
         if: runner.os == 'Linux'
+      # - run: sudo du /
+      #   if: runner.os == 'Linux'
       - name: "node-cleanup"
         run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
           sudo docker image prune --all --force
           sudo docker builder prune -a
+          sudo apt-get clean
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /opt/microsoft
+          sudo rm -rf /usr/local/aws-cli/
+          sudo rm -rf /usr/local/n/versions/
+          sudo rm -rf /usr/local/aws-sam-cli/
+          sudo rm -rf /usr/local/share/powershell/
+          sudo rm -rf /usr/local/lib/node_modules/
+          sudo rm -rf /usr/local/julia*
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/local/.ghcup/
+          sudo rm -rf /opt/hostedtoolcache/node/18.20.8
+          sudo rm -rf /usr/share/swift/
+          sudo rm -rf /usr/share/miniconda/
+          sudo rm -rf /usr/share/icons/
+          sudo rm -rf /usr/share/perl*
+          sudo rm -rf /usr/share/maven-repo/
+          sudo rm -rf /usr/share/vim/
+          sudo rm -rf /usr/lib/ruby/
+          sudo rm -rf /usr/lib/rpm/
+          sudo rm -rf /usr/lib/python3/
+          sudo rm -rf /usr/lib/jvm/
+          # sudo rm -rf /usr/lib/llvm-18
+          sudo rm -rf /usr/lib/llvm-17
+          sudo rm -rf /usr/lib/llvm-16
+          sudo rm -rf /usr/lib/google-cloud-sdk/
+          sudo rm -rf /usr/lib/dotnet
+          sudo rm -rf /usr/lib/python3
+          sudo rm -rf /var/lib/mecab
+          sudo rm -rf /var/log/
+          sudo rm -rf /usr/share/kotlinc/lib
+          sudo rm -rf /opt/az/
+          sudo rm -rf /opt/pipx/
+          sudo rm -rf /home/linuxbrew/
+          sudo rm -rf /var/lib/gems/
+          sudo rm -rf /var/lib/postgresql/
+          sudo rm -rf /var/lib/mysql/
+          sudo rm -rf /var/lib/snapd/
+          sudo rm -rf /var/cache/man/
+          sudo rm -rf /home/runner/.nvm/
+          sudo rm -rf /home/runner/.dotnet/
+          sudo rm -rf /home/runneradmin/.rustup/
+          sudo rm -rf /home/runneradmin/.cargo/
+          sudo rm -rf /etc/php/
+          sudo rm -rf /etc/.java
+          sudo rm -rf /etc/vim
+          sudo rm -rf /etc/skel/
+          sudo rm -rf /usr/include/
+
         if: runner.os == 'Linux'
       - run: df -h
         if: runner.os == 'Linux'
@@ -144,11 +212,27 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - name: Build for ${{ matrix.systems.nix-system }}
+        id: build
         env:
           FLAKE_ITER_NIX_SYSTEM: ${{ matrix.systems.nix-system }}
           FLAKE_ITER_FLAKEREF: ${{ inputs.flake-iter-flakeref }}
         working-directory: ${{ inputs.directory }}
         run: nix run "$FLAKE_ITER_FLAKEREF" -- --verbose build
+      
+      - name: Create Build Check Run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X POST -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -f 'name=Build ${{ matrix.systems.nix-system }}' \
+            -f 'head_sha=${{ github.event.pull_request.head.sha || github.sha }}' \
+            -f 'status=completed' \
+            -f 'conclusion=success' \
+            -f 'output[title]=Build for ${{ matrix.systems.nix-system }} succeeded' \
+            -f 'output[summary]=Successfully built flake for ${{ matrix.systems.nix-system }}' \
+            -f 'output[text]=Flake successfully built and verified on the ${{ matrix.systems.nix-system }} system.' \
+            /repos/${{ github.repository }}/check-runs
 
   success:
     runs-on: ubuntu-latest
@@ -170,7 +254,7 @@ jobs:
           exit 1
         if: |
           contains(needs.*.result, 'failure') ||
-          contains(needs.*.result, 'cancelled') 
+          contains(needs.*.result, 'cancelled')
       - uses: actions/checkout@main
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
       - uses: DeterminateSystems/nix-installer-action@main
