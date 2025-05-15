@@ -21,7 +21,7 @@ jobs:
   DeterminateCI:
     uses: ./.github/workflows/workflow.yml
     permissions:
-      id-token: "write"
-      contents: "read"
+      id-token: write
+      contents: read
     with:
       directory: ./tests/smoke
