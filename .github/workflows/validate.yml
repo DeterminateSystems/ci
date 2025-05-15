@@ -1,6 +1,6 @@
 on:
   push:
-    branches: main
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -13,9 +13,7 @@ jobs:
     steps:
       - name: git checkout
         uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          determinate: true
+      - uses: DeterminateSystems/determinate-nix-action@v3
       - uses: DeterminateSystems/flakehub-cache-action@main
       - run: nix develop -c action-validator -v ./.github/workflows/workflow.yml
       - run: nix develop -c prettier --check .
@@ -23,7 +21,7 @@ jobs:
   DeterminateCI:
     uses: ./.github/workflows/workflow.yml
     permissions:
-      id-token: "write"
-      contents: "read"
+      id-token: write
+      contents: read
     with:
       directory: ./tests/smoke
