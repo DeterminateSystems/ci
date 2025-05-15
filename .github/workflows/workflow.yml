@@ -150,7 +150,7 @@ jobs:
       flakeref_exact: ${{ steps.publish.outputs.flakeref_exact }}
       flakeref_at_least: ${{ steps.publish.outputs.flakeref_at_least }}
     steps:
-      - run: true
+      - run: "true"
       - run: |
           echo "A dependent in the build matrix failed."
           exit 1
