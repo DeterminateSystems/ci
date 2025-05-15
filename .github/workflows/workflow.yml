@@ -95,9 +95,7 @@ jobs:
       - uses: actions/checkout@v4
       # disabled pending strategy discussion on exposing tunables
       # - uses: Determinatesystems/flake-checker-action@main
-      - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          determinate: true
+      - uses: DeterminateSystems/determinate-nix-action@v3
       - uses: DeterminateSystems/flakehub-cache-action@main
       - uses: webfactory/ssh-agent@v0.9.0
         if: ${{ inputs.enable-ssh-agent }}
@@ -125,9 +123,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          determinate: true
+      - uses: DeterminateSystems/determinate-nix-action@v3
       - uses: DeterminateSystems/flakehub-cache-action@main
       - uses: webfactory/ssh-agent@v0.9.0
         if: ${{ inputs.enable-ssh-agent }}
@@ -163,10 +159,8 @@ jobs:
           contains(needs.*.result, 'cancelled')
       - uses: actions/checkout@main
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/determinate-nix-action@v3
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
-        with:
-          determinate: true
       - uses: DeterminateSystems/flakehub-cache-action@main
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
       - uses: "DeterminateSystems/flakehub-push@main"
