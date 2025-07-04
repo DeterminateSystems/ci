@@ -108,6 +108,8 @@ jobs:
           FLAKE_ITER_FLAKEREF: ${{ inputs.flake-iter-flakeref }}
         working-directory: ${{ inputs.directory }}
         run: |
+          nix flake prefetch-inputs "$FLAKE_ITER_FLAKEREF"
+          nix flake prefetch-inputs
           nix run "$FLAKE_ITER_FLAKEREF" -- systems
   build:
     runs-on: ${{ matrix.systems.runner }}
@@ -134,7 +136,10 @@ jobs:
           FLAKE_ITER_NIX_SYSTEM: ${{ matrix.systems.nix-system }}
           FLAKE_ITER_FLAKEREF: ${{ inputs.flake-iter-flakeref }}
         working-directory: ${{ inputs.directory }}
-        run: nix run "$FLAKE_ITER_FLAKEREF" -- --verbose build
+        run: |
+          nix flake prefetch-inputs "$FLAKE_ITER_FLAKEREF"
+          nix flake prefetch-inputs
+          nix run "$FLAKE_ITER_FLAKEREF" -- --verbose build
 
   success:
     runs-on: ubuntu-latest
