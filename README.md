@@ -51,14 +51,14 @@ You'll see something like this when your workflow has run successfully:
 
 ## Configuration options
 
-| Parameter          | Description                                                                                                                                           | Default                                                                                                                                                                   |
-| :----------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `visibility`       | `public`, `unlisted`, or `private` ([private flakes][private-flakes] are available only on a [FlakeHub paid plan][signup])                            |                                                                                                                                                                           |
-| `default-branch`   | The [default Git branch][default-branch] for the repository                                                                                           | `${{ github.event.repository.default_branch }}`                                                                                                                           |
-| `enable-ssh-agent` | Whether to enable [`webfactory/ssh-agent`][ssh-agent] in the workflow. If you set this to `true` you need to supply a secret named `ssh-private-key`. | `false`                                                                                                                                                                   |
-| `directory`        | The root directory of your flake.                                                                                                                     | `.`                                                                                                                                                                       |
-| `fail-fast`        | Whether to cancel all in-progress jobs if any matrix job fails                                                                                        | `true`                                                                                                                                                                    |
-| `runner-map`       | A custom mapping of [Nix system types][nix-system] to desired Actions runners                                                                         | `{ "aarch64-darwin": "macos-latest", "x86_64-darwin": "macos-latest", "x86_64-linux": "ubuntu-latest", "i686-linux": "ubuntu-latest", "aarch64-linux": "ubuntu-latest" }` |
+| Parameter          | Description                                                                                                                                           | Default                                                                                                   |
+| :----------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| `visibility`       | `public`, `unlisted`, or `private` ([private flakes][private-flakes] are available only on a [FlakeHub paid plan][signup])                            |                                                                                                           |
+| `default-branch`   | The [default Git branch][default-branch] for the repository                                                                                           | `${{ github.event.repository.default_branch }}`                                                           |
+| `enable-ssh-agent` | Whether to enable [`webfactory/ssh-agent`][ssh-agent] in the workflow. If you set this to `true` you need to supply a secret named `ssh-private-key`. | `false`                                                                                                   |
+| `directory`        | The root directory of your flake.                                                                                                                     | `.`                                                                                                       |
+| `fail-fast`        | Whether to cancel all in-progress jobs if any matrix job fails                                                                                        | `true`                                                                                                    |
+| `runner-map`       | A custom mapping of [Nix system types][nix-system] to desired Actions runners                                                                         | `{ "aarch64-darwin": "macos-latest", "x86_64-linux": "ubuntu-latest", "aarch64-linux": "ubuntu-latest" }` |
 
 ## Example configurations
 
@@ -118,10 +118,10 @@ ERROR magic_nix_cache: FlakeHub cache initialization failed: FlakeHub cache erro
 
 By default, the CI maps the Nix systems to their equivalent GitHub-hosted runners:
 
-|                                                   | macOS (Apple Silicon)                | ARM Linux                   | macOS (Intel)                        | x86 Linux                   |
-| ------------------------------------------------- | ------------------------------------ | --------------------------- | ------------------------------------ | --------------------------- |
-| Flake `system` (Nix build platform)               | `aarch64-darwin`                     | `aarch64-linux`             | `x86_64-darwin`                      | `x86_64-linux`              |
-| [GitHub Actions Runner][runners] (workflow label) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) |
+|                                                   | macOS (Apple Silicon)                | ARM Linux                   | x86 Linux                   |
+| ------------------------------------------------- | ------------------------------------ | --------------------------- | --------------------------- |
+| Flake `system` (Nix build platform)               | `aarch64-darwin`                     | `aarch64-linux`             | `x86_64-linux`              |
+| [GitHub Actions Runner][runners] (workflow label) | `macos-latest` (using Apple Silicon) | `ubuntu-latest` (using x86) | `ubuntu-latest` (using x86) |
 
 > [!NOTE]
 > There is also a [standard ARM Linux runner][runners-linux-arm] `ubuntu-24.04-arm`, currently in public preview and only supported on public repositories.
@@ -143,8 +143,7 @@ jobs:
     with:
       runner-map: |
         {
-          "aarch64-darwin": "macos-latest-xlarge",
-          "x86_64-darwin": "macos-latest-large"
+          "aarch64-darwin": "macos-latest-xlarge"
         }
 ```
 
