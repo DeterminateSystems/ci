@@ -15,7 +15,6 @@
         "aarch64-linux"
         "aarch64-darwin"
         "x86_64-linux"
-        "x86_64-darwin"
       ];
 
       forEachSystem =
@@ -31,14 +30,17 @@
     in
     {
 
-      devShells = forEachSystem ({ pkgs, pkgs-old }: {
-        default = pkgs.mkShellNoCC {
-          buildInputs = [
-            pkgs.nodePackages.prettier
+      devShells = forEachSystem (
+        { pkgs, pkgs-old }:
+        {
+          default = pkgs.mkShellNoCC {
+            buildInputs = [
+              pkgs.nodePackages.prettier
 
-            pkgs-old.action-validator
-          ];
-        };
-      });
+              pkgs-old.action-validator
+            ];
+          };
+        }
+      );
     };
 }
