@@ -47,6 +47,12 @@ on:
             "x86_64-linux": "ubuntu-latest",
             "aarch64-linux": "ubuntu-24.04-arm"
           }
+      enable-lfs:
+        description: |
+          Whether to enable Git LFS when checking out the repository. Set to `true` if your repository uses Git LFS for large files.
+        required: false
+        default: false
+        type: boolean
     outputs:
       flake_name:
         value: ${{ jobs.success.outputs.flake_name }}
@@ -92,6 +98,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: ${{ inputs.enable-lfs }}
       # disabled pending strategy discussion on exposing tunables
       # - uses: Determinatesystems/flake-checker-action@main
       - uses: DeterminateSystems/determinate-nix-action@v3
@@ -122,6 +130,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: ${{ inputs.enable-lfs }}
       - uses: DeterminateSystems/determinate-nix-action@v3
       - uses: DeterminateSystems/flakehub-cache-action@main
       - uses: webfactory/ssh-agent@v0.9.0
@@ -156,8 +166,10 @@ jobs:
         if: |
           contains(needs.*.result, 'failure') ||
           contains(needs.*.result, 'cancelled')
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v4
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
+        with:
+          lfs: ${{ inputs.enable-lfs }}
       - uses: DeterminateSystems/determinate-nix-action@v3
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
       - uses: DeterminateSystems/flakehub-cache-action@main
