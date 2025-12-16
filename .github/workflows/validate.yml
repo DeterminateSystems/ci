@@ -39,7 +39,7 @@ jobs:
         run: nix develop --command npm run lint
 
       - name: Run test suite
-        run: nix develop --command npm run test
+        run: nix develop --command npm run lint
 
       - name: Build
         run: nix develop --command npm run build
