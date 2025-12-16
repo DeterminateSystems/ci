@@ -100,7 +100,7 @@ jobs:
           FLAKE_ITER_RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
         working-directory: ${{ inputs.directory }}
         # NodeJS is always available on the runner
-        run: node ${{ github.workspace }}/dist/index.mjs
+        run: node ${{ github.workspace }}/dist/index.js
   build:
     runs-on: ${{ matrix.systems.runner }}
     needs: inventory
@@ -126,7 +126,7 @@ jobs:
           FLAKE_ITER_NIX_SYSTEM: ${{ matrix.systems.nix-system }}
         working-directory: ${{ inputs.directory }}
         # NodeJS is always available on the runner
-        run: node ${{ github.workspace }}/dist/index.mjs
+        run: node ${{ github.workspace }}/dist/index.js
 
   success:
     runs-on: ubuntu-latest
