@@ -10,9 +10,6 @@
     "check-fmt": "prettier --check .",
     "format": "prettier --write .",
     "lint": "eslint src/**/*.ts",
-    "docs": "typedoc",
-    "test": "vitest --watch false",
-    "test-dev": "vitest",
     "all": "rm -rf dist && npm run format && npm run lint && npm run build"
   },
   "repository": {
@@ -27,11 +24,9 @@
   },
   "homepage": "https://github.com/DeterminateSystems/ci#readme",
   "dependencies": {
-    "@actions/cache": "^4.1.0",
     "@actions/core": "^1.11.1",
     "@actions/exec": "^1.1.1",
-    "got": "^14.6.5",
-    "type-fest": "^5.3.1"
+    "detsys-ts": "github:DeterminateSystems/detsys-ts"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^6.0.0",
@@ -45,9 +40,7 @@
     "globals": "^16.5.0",
     "prettier": "^3.7.4",
     "tsdown": "^0.17.2",
-    "typedoc": "^0.28.15",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.49.0",
-    "vitest": "^4.0.15"
+    "typescript-eslint": "^8.49.0"
   }
 }
