@@ -30,12 +30,6 @@ on:
         required: false
         default: true
         type: boolean
-      flake-iter-flakeref:
-        description: |
-          Flake reference to use for the flake-iter process. Useful for pinning to specific versions should standards require it. Defaults to the latest release available on FlakeHub.
-        type: string
-        required: false
-        default: https://flakehub.com/f/DeterminateSystems/flake-iter/*
       runner-map:
         description: |
           A custom mapping of [Nix system types](https://zero-to-nix.com/concepts/system-specificity) to desired Actions runners
@@ -104,7 +98,6 @@ jobs:
         id: inventory
         env:
           FLAKE_ITER_RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
-          FLAKE_ITER_FLAKEREF: ${{ inputs.flake-iter-flakeref }}
         working-directory: ${{ inputs.directory }}
         run: |
           nix run "$FLAKE_ITER_FLAKEREF" -- systems
@@ -131,9 +124,9 @@ jobs:
       - name: Build for ${{ matrix.systems.nix-system }}
         env:
           FLAKE_ITER_NIX_SYSTEM: ${{ matrix.systems.nix-system }}
-          FLAKE_ITER_FLAKEREF: ${{ inputs.flake-iter-flakeref }}
         working-directory: ${{ inputs.directory }}
-        run: nix run "$FLAKE_ITER_FLAKEREF" -- --verbose build
+        # NodeJS is always available on the runner
+        run: node ./dist/index.js
 
   success:
     runs-on: ubuntu-latest
