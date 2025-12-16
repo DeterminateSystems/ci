@@ -41,12 +41,6 @@ on:
             "x86_64-linux": "ubuntu-latest",
             "aarch64-linux": "ubuntu-24.04-arm"
           }
-      # This is never used, even by us, but we still need to specify this to satisfy detsys-ts
-      _internal-strict-mode:
-        type: boolean
-        description: Internal use only
-        required: false
-        default: false
     outputs:
       flake_name:
         value: ${{ jobs.success.outputs.flake_name }}
@@ -104,6 +98,8 @@ jobs:
         id: inventory
         env:
           FLAKE_ITER_RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
+          # Necessary to satisfy detsys-ts
+          INPUT__INTERNAL-STRICT-MODE: "false"
         working-directory: ${{ inputs.directory }}
         # NodeJS is always available on the runner
         run: node ${{ github.workspace }}/dist/index.cjs
@@ -130,6 +126,8 @@ jobs:
       - name: Build for ${{ matrix.systems.nix-system }}
         env:
           FLAKE_ITER_NIX_SYSTEM: ${{ matrix.systems.nix-system }}
+          # Necessary to satisfy detsys-ts
+          INPUT__INTERNAL-STRICT-MODE: "false"
         working-directory: ${{ inputs.directory }}
         # NodeJS is always available on the runner
         run: node ${{ github.workspace }}/dist/index.cjs
