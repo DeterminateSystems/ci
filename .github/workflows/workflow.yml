@@ -41,6 +41,12 @@ on:
             "x86_64-linux": "ubuntu-latest",
             "aarch64-linux": "ubuntu-24.04-arm"
           }
+      # This is never used, even by us, but we still need to specify this to satisfy detsys-ts
+      _internal-strict-mode:
+        type: boolean
+        description: Internal use only
+        required: false
+        default: false
     outputs:
       flake_name:
         value: ${{ jobs.success.outputs.flake_name }}
