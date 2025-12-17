@@ -100,6 +100,8 @@ jobs:
           FLAKE_ITER_RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
           # Necessary to satisfy detsys-ts
           INPUT__INTERNAL-STRICT-MODE: "false"
+          # Use the main branch rather than PR, tag, etc.
+          INPUT__SOURCE-BRANCH: "main"
         working-directory: ${{ inputs.directory }}
         # NodeJS is always available on the runner
         run: node ${{ github.workspace }}/dist/index.cjs
@@ -128,6 +130,8 @@ jobs:
           FLAKE_ITER_NIX_SYSTEM: ${{ matrix.systems.nix-system }}
           # Necessary to satisfy detsys-ts
           INPUT__INTERNAL-STRICT-MODE: "false"
+          # Use the main branch rather than PR, tag, etc.
+          INPUT__SOURCE-BRANCH: "main"
         working-directory: ${{ inputs.directory }}
         # NodeJS is always available on the runner
         run: node ${{ github.workspace }}/dist/index.cjs
