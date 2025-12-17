@@ -99,7 +99,7 @@ jobs:
         env:
           FLAKE_ITER_RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
           # Necessary to satisfy detsys-ts
-          INPUT_INTERNAL-STRICT-MODE: "false"
+          INPUT__INTERNAL-STRICT-MODE: "false"
           # Use the main branch rather than PR, tag, etc.
           INPUT_SOURCE-BRANCH: "main"
         working-directory: ${{ inputs.directory }}
@@ -129,7 +129,7 @@ jobs:
         env:
           FLAKE_ITER_NIX_SYSTEM: ${{ matrix.systems.nix-system }}
           # Necessary to satisfy detsys-ts
-          INPUT_INTERNAL-STRICT-MODE: "false"
+          INPUT__INTERNAL-STRICT-MODE: "false"
           # Use the main branch rather than PR, tag, etc.
           INPUT_SOURCE-BRANCH: "main"
         working-directory: ${{ inputs.directory }}
