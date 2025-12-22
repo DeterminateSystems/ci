@@ -1,6 +1,10 @@
 on:
   workflow_call:
     inputs:
+      runs-on:
+        required: true
+        type: string
+        default: "ubuntu-latest"
       visibility:
         description: |
           `public`, `unlisted`, or `private` ([private flakes](https://docs.determinate.systems/flakehub/private-flakes) are available only on a [FlakeHub paid plan](https://flakehub.com/signup)).
@@ -81,7 +85,7 @@ on:
 
 jobs:
   inventory:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
 
     outputs:
       systems: ${{ steps.inventory.outputs.systems }}
