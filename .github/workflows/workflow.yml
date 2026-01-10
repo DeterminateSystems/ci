@@ -53,6 +53,12 @@ on:
         required: false
         default: false
         type: boolean
+      include-output-paths:
+        description: |
+          Whether to include output paths when publishing to FlakeHub. Set to `false` for large/complex flakes where evaluation takes too long and causes OIDC token expiration.
+        required: false
+        default: true
+        type: boolean
     outputs:
       flake_name:
         value: ${{ jobs.success.outputs.flake_name }}
@@ -184,5 +190,5 @@ jobs:
         with:
           rolling: ${{ github.ref == format('refs/heads/{0}', inputs.default-branch) }}
           visibility: ${{ inputs.visibility }}
-          include-output-paths: true
+          include-output-paths: ${{ inputs.include-output-paths }}
           directory: ${{ inputs.directory }}
