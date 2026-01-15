@@ -163,13 +163,29 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: ${{ inputs.enable-lfs }}
+          fetch-depth: 0  # Full clone for LFS compatibility
       - name: Ensure LFS files are checked out
         if: ${{ inputs.enable-lfs }}
         run: |
+          echo "Running git lfs checkout..."
           git lfs checkout
-          # Verify at least one LFS file was smudged (if any exist)
+          echo "Running git lfs pull to ensure all objects are fetched..."
+          git lfs pull
+          # Verify LFS files are actually smudged (not pointers)
           if git lfs ls-files | head -1 | grep -q '^'; then
-            echo "✅ LFS files present and checked out"
+            echo "✅ LFS files present"
+            # Check first LFS file is not a pointer (pointers are ~130 bytes)
+            first_lfs_file=$(git lfs ls-files | head -1 | awk '{print $3}')
+            if [ -n "$first_lfs_file" ] && [ -f "$first_lfs_file" ]; then
+              file_size=$(wc -c < "$first_lfs_file")
+              if [ "$file_size" -gt 200 ]; then
+                echo "✅ LFS file '$first_lfs_file' is smudged (${file_size} bytes)"
+              else
+                echo "❌ LFS file '$first_lfs_file' appears to be a pointer (${file_size} bytes)"
+                head -c 200 "$first_lfs_file"
+                exit 1
+              fi
+            fi
           else
             echo "ℹ️ No LFS files in repository"
           fi
