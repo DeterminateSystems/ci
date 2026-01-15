@@ -175,7 +175,8 @@ jobs:
           if git lfs ls-files | head -1 | grep -q '^'; then
             echo "✅ LFS files present"
             # Check first LFS file is not a pointer (pointers are ~130 bytes)
-            first_lfs_file=$(git lfs ls-files | head -1 | awk '{print $3}')
+            # Use cut instead of awk for NixOS compatibility
+            first_lfs_file=$(git lfs ls-files | head -1 | cut -d' ' -f3-)
             if [ -n "$first_lfs_file" ] && [ -f "$first_lfs_file" ]; then
               file_size=$(wc -c < "$first_lfs_file")
               if [ "$file_size" -gt 200 ]; then
