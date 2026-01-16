@@ -157,6 +157,11 @@ jobs:
       contents: read
 
     steps:
+      # Clean up stale git config from previous runs on self-hosted runners
+      # A previous workflow version set http.extraHeader globally, which persists
+      # and causes "Duplicate header: Authorization" errors with actions/checkout
+      - name: Clean up stale git extraHeader config
+        run: git config --global --unset-all http.https://github.com/.extraHeader || true
       - name: Install git-lfs (Linux)
         if: ${{ inputs.enable-lfs && runner.os == 'Linux' }}
         run: |
