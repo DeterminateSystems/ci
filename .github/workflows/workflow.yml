@@ -257,7 +257,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: ${{ inputs.enable-lfs }}
-          fetch-depth: 0  # Full clone for LFS compatibility
+          fetch-depth: 0 # Full clone for LFS compatibility
       - name: Ensure LFS files are checked out
         if: ${{ inputs.enable-lfs }}
         run: |
