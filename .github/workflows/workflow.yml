@@ -65,6 +65,12 @@ on:
         required: false
         default: ubuntu-latest
         type: string
+      use-flake-check:
+        description: |
+          Use `nix flake check` directly instead of flake-iter. Required for repos with Git LFS files because flake-iter locks to a git revision which causes Nix to fetch from git (LFS pointers) instead of the smudged working directory.
+        required: false
+        default: false
+        type: boolean
     outputs:
       flake_name:
         value: ${{ jobs.success.outputs.flake_name }}
@@ -169,7 +175,42 @@ jobs:
           FLAKE_ITER_FLAKEREF: ${{ inputs.flake-iter-flakeref }}
         working-directory: ${{ inputs.directory }}
         run: |
-          nix run "$FLAKE_ITER_FLAKEREF" -- systems
+          if [[ "${{ inputs.use-flake-check }}" == "true" ]]; then
+            # Map runner to nix-system for single-system check
+            # inventory-runner defaults to ubuntu-latest
+            runner="${{ inputs.inventory-runner }}"
+            case "$runner" in
+              ubuntu-latest|ubuntu-22.04|ubuntu-24.04)
+                nix_system="x86_64-linux"
+                ;;
+              macos-latest|macos-14|macos-15)
+                nix_system="aarch64-darwin"
+                ;;
+              macos-13)
+                nix_system="x86_64-darwin"
+                ;;
+              *)
+                # Self-hosted runner - try to detect or use provided runner-map
+                # For now, assume it matches the runner name pattern
+                if [[ "$runner" == *"arm"* ]] || [[ "$runner" == *"aarch64"* ]]; then
+                  if [[ "$runner" == *"darwin"* ]] || [[ "$runner" == *"macos"* ]]; then
+                    nix_system="aarch64-darwin"
+                  else
+                    nix_system="aarch64-linux"
+                  fi
+                else
+                  if [[ "$runner" == *"darwin"* ]] || [[ "$runner" == *"macos"* ]]; then
+                    nix_system="x86_64-darwin"
+                  else
+                    nix_system="x86_64-linux"
+                  fi
+                fi
+                ;;
+            esac
+            echo "systems=[{\"nix-system\":\"$nix_system\",\"runner\":\"$runner\"}]" >> "$GITHUB_OUTPUT"
+          else
+            nix run "$FLAKE_ITER_FLAKEREF" -- systems
+          fi
   build:
     runs-on: ${{ matrix.systems.runner }}
     needs: inventory
@@ -270,7 +311,12 @@ jobs:
           FLAKE_ITER_NIX_SYSTEM: ${{ matrix.systems.nix-system }}
           FLAKE_ITER_FLAKEREF: ${{ inputs.flake-iter-flakeref }}
         working-directory: ${{ inputs.directory }}
-        run: nix run "$FLAKE_ITER_FLAKEREF" -- --verbose build
+        run: |
+          if [[ "${{ inputs.use-flake-check }}" == "true" ]]; then
+            nix flake check --verbose
+          else
+            nix run "$FLAKE_ITER_FLAKEREF" -- --verbose build
+          fi
 
   success:
     runs-on: ubuntu-latest
