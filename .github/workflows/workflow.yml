@@ -109,6 +109,32 @@ jobs:
       contents: read
 
     steps:
+      # Install git-lfs before checkout when using custom runners that may not have it
+      - name: Install git-lfs (Linux)
+        if: ${{ inputs.enable-lfs && runner.os == 'Linux' }}
+        run: |
+          if ! command -v git-lfs &> /dev/null; then
+            # Download git-lfs from GitHub releases (works on Nix-based runners without sudo)
+            curl -sL https://github.com/git-lfs/git-lfs/releases/download/v3.6.1/git-lfs-linux-amd64-v3.6.1.tar.gz | tar xz
+            mkdir -p "$HOME/.local/bin"
+            mv git-lfs-3.6.1/git-lfs "$HOME/.local/bin/"
+            echo "$HOME/.local/bin" >> $GITHUB_PATH
+            export PATH="$HOME/.local/bin:$PATH"
+          fi
+          git lfs install
+      - name: Install git-lfs (macOS)
+        if: ${{ inputs.enable-lfs && runner.os == 'macOS' }}
+        run: |
+          if ! command -v git-lfs &> /dev/null; then
+            # Download git-lfs from GitHub releases (works without brew)
+            curl -sL https://github.com/git-lfs/git-lfs/releases/download/v3.6.1/git-lfs-darwin-arm64-v3.6.1.zip -o git-lfs.zip
+            unzip -q git-lfs.zip
+            mkdir -p "$HOME/.local/bin"
+            mv git-lfs-3.6.1/git-lfs "$HOME/.local/bin/"
+            echo "$HOME/.local/bin" >> $GITHUB_PATH
+            export PATH="$HOME/.local/bin:$PATH"
+          fi
+          git lfs install
       - uses: actions/checkout@v4
         with:
           lfs: ${{ inputs.enable-lfs }}
