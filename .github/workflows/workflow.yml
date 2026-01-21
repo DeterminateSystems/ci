@@ -127,7 +127,7 @@ jobs:
             echo "$HOME/.local/bin" >> $GITHUB_PATH
             export PATH="$HOME/.local/bin:$PATH"
           fi
-          git lfs install
+          git lfs install --force
       - name: Install git-lfs (macOS)
         if: ${{ inputs.enable-lfs && runner.os == 'macOS' }}
         run: |
@@ -140,7 +140,7 @@ jobs:
             echo "$HOME/.local/bin" >> $GITHUB_PATH
             export PATH="$HOME/.local/bin:$PATH"
           fi
-          git lfs install
+          git lfs install --force
       - uses: actions/checkout@v4
         with:
           lfs: ${{ inputs.enable-lfs }}
@@ -211,7 +211,7 @@ jobs:
             echo "$HOME/.local/bin" >> $GITHUB_PATH
             export PATH="$HOME/.local/bin:$PATH"
           fi
-          git lfs install
+          git lfs install --force
       - name: Install git-lfs (macOS)
         if: ${{ inputs.enable-lfs && runner.os == 'macOS' }}
         run: |
@@ -224,7 +224,7 @@ jobs:
             echo "$HOME/.local/bin" >> $GITHUB_PATH
             export PATH="$HOME/.local/bin:$PATH"
           fi
-          git lfs install
+          git lfs install --force
       - uses: actions/checkout@v4
         with:
           lfs: ${{ inputs.enable-lfs }}
