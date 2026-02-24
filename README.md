@@ -59,6 +59,7 @@ You'll see something like this when your workflow has run successfully:
 | `directory`        | The root directory of your flake.                                                                                                                     | `.`                                                                                                       |
 | `fail-fast`        | Whether to cancel all in-progress jobs if any matrix job fails                                                                                        | `true`                                                                                                    |
 | `runner-map`       | A custom mapping of [Nix system types][nix-system] to desired Actions runners                                                                         | `{ "aarch64-darwin": "macos-latest", "x86_64-linux": "ubuntu-latest", "aarch64-linux": "ubuntu-latest" }` |
+| `extra-nix-conf`   | Extra Nix configuration to pass to Determinate Nix                                                                                                    |                                                                                                           |
 
 ## Example configurations
 
