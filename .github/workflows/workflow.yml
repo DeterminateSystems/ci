@@ -100,8 +100,6 @@ on:
         required: false
 
 env:
-  POLICY_TESTS: |
-    ${{ inputs.disable-cache-nixos-org && env.POLICY_TEST_CACHE_NIXOS_ORG || 'true' }}
   POLICY_TEST_CACHE_NIXOS_ORG: |
     if nix config show substituters | grep -q cache.nixos.org; then
       echo "❌ Nix has cache.nixos.org enabled as a substituter, which is prohibited by configuration:"
@@ -110,6 +108,8 @@ env:
     else
       echo "✅ Nix does not have cache.nixos.org enabled as a substituter."
     fi
+  POLICY_TESTS: |
+    ${{ inputs.disable-cache-nixos-org && env.POLICY_TEST_CACHE_NIXOS_ORG || 'true' }}
 
 jobs:
   inventory:
