@@ -61,6 +61,7 @@ You'll see something like this when your workflow has run successfully:
 | `runner-map`              | A custom mapping of [Nix system types][nix-system] to desired Actions runners                                                                         | `{ "aarch64-darwin": "macos-latest", "x86_64-linux": "ubuntu-latest", "aarch64-linux": "ubuntu-24.04-arm" }` |
 | `extra-nix-conf`          | Extra Nix configuration to pass to Determinate Nix                                                                                                    |                                                                                                              |
 | `post-inventory-commands` | Commands to run after the inventory step. For example, a linting command.                                                                             | unset                                                                                                        |
+| `disable-cache-nixos-org` | Do not substitute from cache.nixos.org.                                                                                                               | `false` (use cache.nixos.org)                                                                                |
 
 ## Example configurations
 
