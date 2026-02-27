@@ -19,9 +19,25 @@ jobs:
       - run: nix develop -c prettier --check .
 
   DeterminateCI:
+    needs: DisabledCacheNixOSOrg
     uses: ./.github/workflows/workflow.yml
     permissions:
       id-token: write
       contents: read
     with:
       directory: ./tests/smoke
+
+  DisabledCacheNixOSOrg:
+    uses: ./.github/workflows/workflow.yml
+    permissions:
+      id-token: write
+      contents: read
+    with:
+      directory: ./tests/smoke
+      disable-cache-nixos-org: true
+      post-inventory-commands: |
+        if nix config show substituters | grep -q "cache.nixos.org"; then
+          echo "Nix has cache.nixos.org enabled as a substituter, which is prohibited by configuration:"
+          nix config show substituters
+          exit 1
+        fi
