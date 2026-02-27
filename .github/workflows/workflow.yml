@@ -99,6 +99,18 @@ on:
       ssh-private-key:
         required: false
 
+env:
+  POLICY_TESTS: |
+    ${{ inputs.disable-cache-nixos-org && env.POLICY_TEST_CACHE_NIXOS_ORG || 'true' }}
+  POLICY_TEST_CACHE_NIXOS_ORG: |
+    if nix config show substituters | grep -q cache.nixos.org; then
+      echo "❌ Nix has cache.nixos.org enabled as a substituter, which is prohibited by configuration:"
+      nix config show substituters
+      exit 1
+    else
+      echo "✅ Nix does not have cache.nixos.org enabled as a substituter."
+    fi
+
 jobs:
   inventory:
     runs-on: ubuntu-latest
@@ -117,8 +129,10 @@ jobs:
       - uses: DeterminateSystems/determinate-nix-action@v3
         with:
           extra-conf: |
-            ${{ inputs.disable-cache-nixos-org && 'substituters =' }}
+            ${{ inputs.disable-cache-nixos-org && 'substituters =' || '' }}
       - uses: DeterminateSystems/flakehub-cache-action@main
+      - name: "Configuration policy checks"
+        run: ${{ env.POLICY_TESTS }}
       - uses: webfactory/ssh-agent@v0.9.0
         if: ${{ inputs.enable-ssh-agent }}
         with:
@@ -153,8 +167,10 @@ jobs:
           extra-conf: |
             extra-experimental-features = provenance
             ${{ inputs.extra-nix-conf }}
-            ${{ inputs.disable-cache-nixos-org && 'substituters =' }}
+            ${{ inputs.disable-cache-nixos-org && 'substituters =' || '' }}
       - uses: DeterminateSystems/flakehub-cache-action@main
+      - name: "Configuration policy checks"
+        run: ${{ env.POLICY_TESTS }}
       - uses: webfactory/ssh-agent@v0.9.0
         if: ${{ inputs.enable-ssh-agent }}
         with:
@@ -192,9 +208,15 @@ jobs:
       - uses: actions/checkout@main
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
       - uses: DeterminateSystems/determinate-nix-action@v3
+        with:
+          extra-conf: |
+            ${{ inputs.disable-cache-nixos-org && 'substituters =' || '' }}
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
       - uses: DeterminateSystems/flakehub-cache-action@main
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
+      - name: "Configuration policy checks"
+        if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
+        run: ${{ env.POLICY_TESTS }}
       - uses: DeterminateSystems/flakehub-push@main
         if: ${{ !github.repository.fork && inputs.visibility != '' && (github.ref == format('refs/heads/{0}', inputs.default-branch) || startsWith(github.ref, 'refs/tags/')) }}
         id: publish
