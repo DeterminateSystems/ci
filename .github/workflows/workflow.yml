@@ -53,6 +53,14 @@ on:
         required: false
         type: string
         default: ""
+      post-inventory-commands:
+        description: |
+          A command or set of commands to run at the end of the Inventory job.
+
+          For example, a linting step.
+        required: false
+        type: string
+        default: ""
     outputs:
       flake_name:
         value: ${{ jobs.success.outputs.flake_name }}
@@ -114,6 +122,9 @@ jobs:
         working-directory: ${{ inputs.directory }}
         run: |
           nix run "$FLAKE_ITER_FLAKEREF" -- systems
+      - name: Post-inventory commands
+        if: ${{ inputs.post-inventory-commands != '' }}
+        run: ${{ inputs.post-inventory-commands }}
   build:
     runs-on: ${{ matrix.systems.runner }}
     needs: inventory
