@@ -158,7 +158,9 @@ jobs:
 
   success:
     runs-on: ubuntu-latest
-    needs: build
+    needs:
+      - inventory
+      - build
     if: ${{ always() }}
     permissions:
       id-token: write
