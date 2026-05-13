@@ -97,7 +97,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       # disabled pending strategy discussion on exposing tunables
       # - uses: Determinatesystems/flake-checker-action@main
       - uses: DeterminateSystems/determinate-nix-action@v3
