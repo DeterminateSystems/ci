@@ -12,11 +12,15 @@ jobs:
       contents: read
     steps:
       - name: git checkout
-        uses: actions/checkout@v4
-      - uses: DeterminateSystems/determinate-nix-action@v3
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: DeterminateSystems/determinate-nix-action@9adf02b41cfdac2632e1c16f0480ff5bf3b05dd6 # v3.21.1
       - uses: DeterminateSystems/flakehub-cache-action@main
       - run: nix develop -c action-validator -v ./.github/workflows/workflow.yml
       - run: nix develop -c prettier --check .
+      - name: Check GitHub Actions compliance
+        run: nix develop -c zizmor .github
 
   DeterminateCI:
     uses: ./.github/workflows/workflow.yml
