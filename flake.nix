@@ -24,7 +24,6 @@
         {
           default = pkgs.mkShellNoCC {
             packages = with pkgs; [
-              action-validator
               actionlint
               prettier
               zizmor

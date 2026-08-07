@@ -17,9 +17,7 @@ jobs:
           persist-credentials: false
       - uses: DeterminateSystems/determinate-nix-action@main
       - uses: DeterminateSystems/flakehub-cache-action@main
-      - name: Validate Action
-        run: nix develop -c action-validator -v ./.github/workflows/workflow.yml
-      - name: Check GitHub Actions expressions
+      - name: Validate GitHub Actions workflows
         run: nix develop -c actionlint
       - name: Check syntax
         run: nix develop -c prettier --check .
