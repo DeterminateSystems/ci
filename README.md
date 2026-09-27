@@ -60,6 +60,7 @@ You'll see something like this when your workflow has run successfully:
 | `fail-fast`        | Whether to cancel all in-progress jobs if any matrix job fails                                                                                        | `true`                                                                                                    |
 | `runner-map`       | A custom mapping of [Nix system types][nix-system] to desired Actions runners                                                                         | `{ "aarch64-darwin": "macos-latest", "x86_64-linux": "ubuntu-latest", "aarch64-linux": "ubuntu-latest" }` |
 | `extra-nix-conf`   | Extra Nix configuration to pass to Determinate Nix                                                                                                    |                                                                                                           |
+| `allow-fork`       | The `owner/repo` name of a fork that is allowed to publish to FlakeHub. Forks skip publishing unless `github.repository` matches this value exactly.  |                                                                                                           |
 
 ## Example configurations
 
