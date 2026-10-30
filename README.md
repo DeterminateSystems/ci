@@ -49,6 +49,36 @@ You'll see something like this when your workflow has run successfully:
 
 ![Screenshot of successful build](https://github.com/DeterminateSystems/ci/assets/76716/c2c6aa07-3fd3-4e66-9440-bef264b472da)
 
+### Custom flake outputs
+
+> [!IMPORTANT]
+> Determinate CI uses [flake schemas][flake-schemas] to discover what to build.
+> [Determinate Nix][determinate-nix] ships with schemas for the standard flake outputs, such as `packages`, `devShells`, `checks`, and `nixosConfigurations`, so most flakes need no extra configuration.
+>
+> If your flake has non-standard outputs, CI silently skips them unless you define a schema for each one in your flake's `schemas` output.
+> A `schemas` output _replaces_ the default schemas, so merge yours with the ones from [`flake-schemas`][flake-schemas]:
+>
+> ```nix
+> {
+>   inputs.flake-schemas.url = "https://flakehub.com/f/DeterminateSystems/flake-schemas/*";
+>
+>   outputs = { self, flake-schemas, ... }: {
+>     schemas = flake-schemas.exportedSchemas // {
+>       myPackages = {
+>         version = 1;
+>         doc = "Extra packages for CI to build.";
+>         inventory = flake-schemas.lib.derivationsInventory "package" false;
+>       };
+>     };
+>
+>     myPackages.x86_64-linux.foo = /* ... */;
+>   };
+> }
+> ```
+>
+> Run `nix flake show` locally to check that Nix recognizes every output.
+> CI doesn't build any output that Nix lists as an `unknown flake output`.
+
 ## Configuration options
 
 | Parameter          | Description                                                                                                                                           | Default                                                                                                   |
@@ -220,6 +250,7 @@ This workflow uses a collection of GitHub Actions by Determinate Systems, all of
 
 [binary-cache]: https://zero-to-nix.com/concepts/caching
 [cache]: https://flakehub.com/cache
+[determinate-nix]: https://docs.determinate.systems/determinate-nix
 [default-branch]: https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/managing-branches-in-your-repository/changing-the-default-branch
 [flake-schemas]: https://github.com/DeterminateSystems/flake-schemas
 [flakehub]: https://flakehub.com/

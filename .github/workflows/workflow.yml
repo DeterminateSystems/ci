@@ -32,7 +32,7 @@ on:
         type: boolean
       flake-iter-flakeref:
         description: |
-          Flake reference to use for the flake-iter process. Useful for pinning to specific versions should standards require it. Defaults to the latest release available on FlakeHub.
+          Deprecated and ignored. The flake inventory now comes from Determinate Nix's built-in flake schema support instead of flake-iter.
         type: string
         required: false
         default: https://flakehub.com/f/DeterminateSystems/flake-iter/*
@@ -121,11 +121,29 @@ jobs:
       - name: Inventory the flake for targeted systems
         id: inventory
         env:
-          FLAKE_ITER_RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
-          FLAKE_ITER_FLAKEREF: ${{ inputs.flake-iter-flakeref }}
+          RUNNER_MAP: ${{ toJson(fromJson(inputs.runner-map)) }}
         working-directory: ${{ inputs.directory }}
         run: |
-          nix run "$FLAKE_ITER_FLAKEREF" -- systems
+          set -euo pipefail
+
+          inventory="$RUNNER_TEMP/inventory.json"
+          nix flake show --json --all-systems --no-write-lock-file . > "$inventory"
+
+          all_systems=$(jq -c '[.. | objects | select(has("forSystems")) | .forSystems[]] | unique' "$inventory")
+
+          jq -r --argjson map "$RUNNER_MAP" '.[] | select($map[.] == null)' <<< "$all_systems" \
+            | while IFS= read -r system; do
+                echo "::warning::Flake contains derivation outputs for Nix system \`$system\` but no runner is specified for that system"
+              done
+
+          systems=$(jq -c --argjson map "$RUNNER_MAP" \
+            'map(select($map[.] != null) | {"nix-system": ., runner: $map[.]})' <<< "$all_systems")
+
+          if [ "$systems" = "[]" ]; then
+            echo "::warning::Flake does not include a Nix system."
+          fi
+
+          echo "systems=$systems" >> "$GITHUB_OUTPUT"
   build:
     runs-on: ${{ matrix.systems.runner }}
     needs: inventory
@@ -154,10 +172,50 @@ jobs:
           ssh-private-key: ${{ secrets.ssh-private-key }}
       - name: Build for ${{ matrix.systems.nix-system }}
         env:
-          FLAKE_ITER_NIX_SYSTEM: ${{ matrix.systems.nix-system }}
-          FLAKE_ITER_FLAKEREF: ${{ inputs.flake-iter-flakeref }}
+          NIX_SYSTEM: ${{ matrix.systems.nix-system }}
         working-directory: ${{ inputs.directory }}
-        run: nix run "$FLAKE_ITER_FLAKEREF" -- --verbose build
+        run: |
+          set -euo pipefail
+
+          inventory="$RUNNER_TEMP/inventory.json"
+          nix flake show --json --all-systems --drv-paths --output-paths --no-write-lock-file . > "$inventory"
+
+          # One line per unique derivation: `<drv>^<outputs>` followed by its output paths.
+          derivations=$(jq -r --arg sys "$NIX_SYSTEM" '
+            [.. | objects
+             | select(has("forSystems") and (.forSystems | index($sys)) and .derivation.path != null)
+             | .derivation]
+            | unique_by(.path)[]
+            | "\(.path)^\(.outputs | keys | join(",")) \(.outputs | [.[]] | join(" "))"' "$inventory")
+
+          if [ -z "$derivations" ]; then
+            echo "No derivations to build for $NIX_SYSTEM"
+            exit 0
+          fi
+
+          logged_in_to_flakehub=false
+          if nix store info --store https://cache.flakehub.com > /dev/null 2>&1; then
+            logged_in_to_flakehub=true
+          fi
+
+          to_build=()
+          while IFS=' ' read -r installable output_paths; do
+            # shellcheck disable=SC2086 # output_paths is intentionally split
+            if [ "$logged_in_to_flakehub" = true ] \
+              && nix path-info --store https://cache.flakehub.com $output_paths > /dev/null 2>&1; then
+              echo "Skipping $installable: its outputs are already in FlakeHub Cache."
+            else
+              to_build+=("$installable")
+            fi
+          done <<< "$derivations"
+
+          if [ "${#to_build[@]}" -eq 0 ]; then
+            echo "All derivations for $NIX_SYSTEM are already in FlakeHub Cache"
+            exit 0
+          fi
+
+          echo "Building ${#to_build[@]} derivation(s) for $NIX_SYSTEM"
+          nix build --no-link --print-out-paths --print-build-logs "${to_build[@]}"
 
   success:
     runs-on: ubuntu-latest
